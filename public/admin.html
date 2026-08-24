@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin Dashboard | Hari Engineering Works</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body style="background-color: #f1f5f9;">
+
+  <!-- Admin Header Nav -->
+  <header style="background: #031b30; color: #ffffff; padding: 1rem 0; border-bottom: 3px solid var(--primary-blue);">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div class="logo-icon" style="width:36px; height:36px; font-size:1.1rem;"><i class="fa-solid fa-user-gear"></i></div>
+        <h2 style="color:#ffffff; font-size: 1.25rem; margin:0;">Hari Engineering Admin Portal</h2>
+      </div>
+      <div>
+        <a href="/" class="btn btn-outline btn-sm"><i class="fa-solid fa-globe"></i> View Main Website</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Auth Modal -->
+  <div id="admin-auth-modal" style="position: fixed; inset: 0; z-index: 9999; background: rgba(5, 42, 74, 0.95); display: flex; align-items: center; justify-content: center; padding: 1.5rem;">
+    <div style="background: #ffffff; padding: 2.5rem; border-radius: var(--radius-lg); max-width: 420px; width: 100%; box-shadow: var(--shadow-xl); text-align: center;">
+      <div style="width: 60px; height: 60px; background: var(--bg-subtle); color: var(--primary-blue); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.75rem; margin-bottom: 1rem;">
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <h3 style="margin-bottom: 0.5rem; color: var(--text-main);">Protected Admin Area</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Enter administrator security pass key to access submitted enquiries and product CRUD database.</p>
+      
+      <div class="form-group">
+        <input type="password" id="admin-pass-input" class="form-control" placeholder="Enter Security Password (admin123)" style="text-align: center;">
+      </div>
+
+      <button id="admin-auth-btn" class="btn btn-primary" style="width: 100%;">
+        Unlock Dashboard <i class="fa-solid fa-key"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Dashboard Main Content -->
+  <main style="padding: 3rem 0;">
+    <div class="container">
+
+      <!-- Navigation Tabs -->
+      <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+        <button class="admin-tab-btn filter-btn active" data-tab="enquiries"><i class="fa-solid fa-envelope-open-text"></i> Customer Enquiries</button>
+        <button class="admin-tab-btn filter-btn" data-tab="products"><i class="fa-solid fa-boxes-stacked"></i> Manage Products Catalog (CRUD)</button>
+      </div>
+
+      <!-- Tab 1: Customer Enquiries -->
+      <div id="tab-enquiries" class="admin-tab-content" style="display: block;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div>
+            <h3 style="margin:0; font-size: 1.4rem;">Customer RFQ & Contact Submissions</h3>
+            <p style="margin:0; font-size: 0.85rem; color: var(--text-muted);">Real-time submissions captured into MongoDB collection.</p>
+          </div>
+          <button onclick="fetchAdminEnquiries()" class="btn btn-secondary btn-sm"><i class="fa-solid fa-rotate"></i> Refresh Enquiries</button>
+        </div>
+
+        <div style="overflow-x: auto; background: #ffffff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); border: 1px solid var(--border-light);">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th>Company</th>
+                <th>Contact Info</th>
+                <th>Product Interested</th>
+                <th>Message / Specs</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="enquiries-table-body">
+              <!-- Rendered by /js/admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 2: Manage Products Catalog (CRUD) -->
+      <div id="tab-products" class="admin-tab-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div>
+            <h3 style="margin:0; font-size: 1.4rem;">Database Products Catalog</h3>
+            <p style="margin:0; font-size: 0.85rem; color: var(--text-muted);">Add new products, edit specs, or remove items from MongoDB.</p>
+          </div>
+          <button id="add-product-btn" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Add New Product</button>
+        </div>
+
+        <div style="overflow-x: auto; background: #ffffff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); border: 1px solid var(--border-light);">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Featured</th>
+                <th>Short Spec</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="products-table-body">
+              <!-- Rendered by /js/admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Product Modal Form (Add / Edit) -->
+  <div id="product-modal" style="position: fixed; inset: 0; z-index: 5000; background: rgba(5, 42, 74, 0.85); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 1.5rem;">
+    <div style="background: #ffffff; padding: 2rem; border-radius: var(--radius-lg); max-width: 650px; width: 100%; box-shadow: var(--shadow-xl); max-height: 90vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem;">
+        <h3 id="modal-title" style="margin:0; font-size: 1.25rem;">Add New Industrial Product</h3>
+        <button onclick="closeProductModal()" style="background:none; border:none; font-size: 1.5rem; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+
+      <form id="product-form">
+        <input type="hidden" id="product-id">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prod-name">Product Name <span style="color:var(--danger);">*</span></label>
+            <input type="text" id="prod-name" class="form-control" placeholder="e.g. Centrifugal Air Blower" required>
+          </div>
+
+          <div class="form-group">
+            <label for="prod-category">Category <span style="color:var(--danger);">*</span></label>
+            <select id="prod-category" class="form-control" required>
+              <option value="Industrial Blowers">Industrial Blowers</option>
+              <option value="Axial Flow Fans">Axial Flow Fans</option>
+              <option value="Dust Collectors">Dust Collectors</option>
+              <option value="Scrubbers">Scrubbers</option>
+              <option value="Industrial Ducting Systems">Industrial Ducting Systems</option>
+              <option value="Fume/Exhaust Hoods">Fume/Exhaust Hoods</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="prod-short">Short Description <span style="color:var(--danger);">*</span></label>
+          <input type="text" id="prod-short" class="form-control" placeholder="Brief 1-sentence technical overview..." required>
+        </div>
+
+        <div class="form-group">
+          <label for="prod-full">Full Technical Description <span style="color:var(--danger);">*</span></label>
+          <textarea id="prod-full" class="form-control" rows="3" placeholder="Detailed engineering specs and descriptions..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="prod-img">Image URL</label>
+          <input type="text" id="prod-img" class="form-control" placeholder="https://images.unsplash.com/...">
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+          <input type="checkbox" id="prod-featured" style="width: 18px; height: 18px; cursor: pointer;">
+          <label for="prod-featured" style="margin:0; cursor: pointer;">Show as Featured Product on Homepage</label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+          <button type="button" onclick="closeProductModal()" class="btn btn-secondary btn-sm">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-floppy-disk"></i> Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

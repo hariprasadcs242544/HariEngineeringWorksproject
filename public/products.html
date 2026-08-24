@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore Hari Engineering Works product catalog: Centrifugal blowers, axial flow fans, pulse-jet dust collectors, wet scrubbers, industrial ducting, fume hoods.">
+  <title>Industrial Machinery Catalog | Hari Engineering Works</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-content">
+      <div class="top-info">
+        <span><i class="fa-solid fa-phone"></i> +91 98765 43210</span>
+        <span><i class="fa-solid fa-envelope"></i> sales@hariengineeringworks.com</span>
+        <span><i class="fa-solid fa-location-dot"></i> Sakinaka, Mumbai, Maharashtra</span>
+      </div>
+      <div><span><i class="fa-solid fa-shield-halved"></i> Engineering Reliability Guaranteed</span></div>
+    </div>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="header-nav">
+    <div class="container">
+      <nav class="navbar">
+        <a href="/" class="logo">
+          <div class="logo-icon"><i class="fa-solid fa-fan"></i></div>
+          <div class="logo-text">
+            <h2>HARI ENGINEERING</h2>
+            <span>WORKS • INDUSTRIAL SOLUTIONS</span>
+          </div>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/about" class="nav-link">About Us</a></li>
+          <li class="dropdown">
+            <a href="/products" class="nav-link active">Products <i class="fa-solid fa-chevron-down" style="font-size:0.75rem;"></i></a>
+            <ul class="dropdown-menu">
+              <li><a href="/products?category=Air%20Control%20Systems" class="dropdown-item">Air Control Systems</a></li>
+              <li><a href="/products?category=Industrial%20Blowers" class="dropdown-item">Industrial Blowers</a></li>
+              <li><a href="/products?category=Axial%20Flow%20Fans" class="dropdown-item">Axial Flow Fans</a></li>
+              <li><a href="/products?category=Dust%20Collectors" class="dropdown-item">Dust Collectors</a></li>
+              <li><a href="/products?category=Scrubbers" class="dropdown-item">Wet Scrubbers</a></li>
+              <li><a href="/products?category=Industrial%20Ducting%20Systems" class="dropdown-item">Ducting Systems</a></li>
+              <li><a href="/products?category=Fume/Exhaust%20Hoods" class="dropdown-item">Fume Hoods</a></li>
+            </ul>
+          </li>
+          <li><a href="/services" class="nav-link">Services</a></li>
+          <li><a href="/industries" class="nav-link">Industries</a></li>
+          <li><a href="/gallery" class="nav-link">Gallery</a></li>
+          <li><a href="/contact" class="nav-link">Contact Us</a></li>
+          <li><a href="/contact" class="btn btn-primary btn-sm">Get a Quote</a></li>
+        </ul>
+        <button class="mobile-toggle"><i class="fa-solid fa-bars"></i></button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Banner -->
+  <section style="background: linear-gradient(135deg, #052a4a, #0b5fa5); padding: 3.5rem 0; color: #ffffff; text-align: center;">
+    <div class="container fade-in-up">
+      <span class="badge-tag" style="background: rgba(255,255,255,0.15); color: #ffffff;">Industrial Machinery & Air Systems</span>
+      <h1 style="font-size: 2.5rem; color: #ffffff; margin-top: 0.5rem;">Hari Engineering Product Catalog</h1>
+      <p style="color: #cbd5e1; max-width: 650px; margin: 0.5rem auto 0 auto;">High CFM & CMH Blowers, Axial Fans, Pulse-Jet Dust Collectors, Wet Scrubbers, Ducting Lines & Air Control Systems manufactured in Sakinaka, Mumbai.</p>
+    </div>
+  </section>
+
+  <!-- Search & Category Filters -->
+  <section style="padding: 3rem 0; background: var(--bg-light);">
+    <div class="container">
+      
+      <!-- Search Input -->
+      <div style="max-width: 550px; margin: 0 auto 2rem auto; position: relative;" class="fade-in-up">
+        <input type="text" id="product-search-input" class="form-control" placeholder="Search CFM, CMH, Blowers, Fans, Scrubbers, Ducting..." style="padding-left: 2.75rem; border-radius: var(--radius-full); box-shadow: var(--shadow-md);">
+        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%); color: var(--text-light);"></i>
+      </div>
+
+      <!-- Filter Category Buttons -->
+      <div class="filter-container fade-in-up">
+        <button class="filter-btn active" data-category="All">All Categories</button>
+        <button class="filter-btn" data-category="Air Control Systems">Air Control Systems</button>
+        <button class="filter-btn" data-category="Industrial Blowers">Industrial Blowers</button>
+        <button class="filter-btn" data-category="Axial Flow Fans">Axial Flow Fans</button>
+        <button class="filter-btn" data-category="Dust Collectors">Dust Collectors</button>
+        <button class="filter-btn" data-category="Scrubbers">Wet Scrubbers</button>
+        <button class="filter-btn" data-category="Industrial Ducting Systems">Ducting Systems</button>
+        <button class="filter-btn" data-category="Fume/Exhaust Hoods">Fume Hoods</button>
+      </div>
+
+      <!-- Dynamic Product Cards Grid -->
+      <div id="products-grid-container" class="products-grid">
+        <!-- Rendered by /js/products.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding-top:0;">
+        <p>&copy; 2026 Hari Engineering Works. All Rights Reserved.</p>
+        <p><a href="/" style="color:#94a3b8;">Home</a> | <a href="/products" style="color:#94a3b8;">Products</a> | <a href="/contact" style="color:#94a3b8;">Contact Us</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/products.js"></script>
+</body>
+</html>

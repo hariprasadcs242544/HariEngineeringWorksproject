@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Technical specifications and detail page for Hari Engineering Works industrial equipment.">
+  <title>Product Details | Hari Engineering Works</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-content">
+      <div class="top-info">
+        <span><i class="fa-solid fa-phone"></i> +91 98765 43210</span>
+        <span><i class="fa-solid fa-envelope"></i> sales@hariengineeringworks.com</span>
+        <span><i class="fa-solid fa-location-dot"></i> Sakinaka, Mumbai, Maharashtra</span>
+      </div>
+      <div><span><i class="fa-solid fa-industry"></i> B2B Industrial Machinery</span></div>
+    </div>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="header-nav">
+    <div class="container">
+      <nav class="navbar">
+        <a href="/" class="logo">
+          <div class="logo-icon"><i class="fa-solid fa-fan"></i></div>
+          <div class="logo-text">
+            <h2>HARI ENGINEERING</h2>
+            <span>WORKS • INDUSTRIAL SOLUTIONS</span>
+          </div>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/about" class="nav-link">About Us</a></li>
+          <li class="dropdown">
+            <a href="/products" class="nav-link active">Products <i class="fa-solid fa-chevron-down" style="font-size:0.75rem;"></i></a>
+            <ul class="dropdown-menu">
+              <li><a href="/products?category=Industrial%20Blowers" class="dropdown-item">Industrial Blowers</a></li>
+              <li><a href="/products?category=Axial%20Flow%20Fans" class="dropdown-item">Axial Flow Fans</a></li>
+              <li><a href="/products?category=Dust%20Collectors" class="dropdown-item">Dust Collectors</a></li>
+              <li><a href="/products?category=Scrubbers" class="dropdown-item">Wet Scrubbers</a></li>
+              <li><a href="/products?category=Industrial%20Ducting%20Systems" class="dropdown-item">Ducting Systems</a></li>
+              <li><a href="/products?category=Fume/Exhaust%20Hoods" class="dropdown-item">Fume Hoods</a></li>
+            </ul>
+          </li>
+          <li><a href="/services" class="nav-link">Services</a></li>
+          <li><a href="/industries" class="nav-link">Industries</a></li>
+          <li><a href="/gallery" class="nav-link">Gallery</a></li>
+          <li><a href="/contact" class="nav-link">Contact Us</a></li>
+          <li><a href="/contact" class="btn btn-primary btn-sm">Get a Quote</a></li>
+        </ul>
+        <button class="mobile-toggle"><i class="fa-solid fa-bars"></i></button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Product Detail Container -->
+  <section style="padding: 4rem 0; background: #ffffff;">
+    <div class="container" id="product-detail-view">
+      <div style="text-align: center; padding: 4rem 0;">
+        <i class="fa-solid fa-gear fa-spin" style="font-size: 3rem; color: var(--primary-blue);"></i>
+        <p style="margin-top: 1rem; color: var(--text-muted);">Loading engineering product specs...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding-top:0;">
+        <p>&copy; 2026 Hari Engineering Works. All Rights Reserved.</p>
+        <p><a href="/" style="color:#94a3b8;">Home</a> | <a href="/products" style="color:#94a3b8;">Products</a> | <a href="/contact" style="color:#94a3b8;">Contact Us</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const container = document.getElementById('product-detail-view');
+      const urlParams = new URLSearchParams(window.location.search);
+      const prodId = urlParams.get('id');
+
+      if (!prodId) {
+        window.location.href = '/products';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/products/${prodId}`);
+        const resData = await response.json();
+
+        if (resData.success && resData.data) {
+          const product = resData.data;
+          document.title = `${product.name} | Hari Engineering Works`;
+
+          const mainImg = product.images && product.images.length > 0 
+            ? product.images[0] 
+            : 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80';
+
+          const specsHtml = product.specifications && product.specifications.length > 0
+            ? product.specifications.map(s => `
+                <tr>
+                  <th>${s.key}</th>
+                  <td>${s.value}</td>
+                </tr>
+              `).join('')
+            : '<tr><td colspan="2">Standard custom engineering specs apply.</td></tr>';
+
+          const appsHtml = product.applications && product.applications.length > 0
+            ? product.applications.map(a => `<li style="margin-bottom:0.5rem;"><i class="fa-solid fa-circle-check" style="color:var(--primary-blue); margin-right:0.5rem;"></i> ${a}</li>`).join('')
+            : '<li>General Industrial Air Handling</li>';
+
+          const featuresHtml = product.features && product.features.length > 0
+            ? product.features.map(f => `<li style="margin-bottom:0.5rem;"><i class="fa-solid fa-star" style="color:#f59e0b; margin-right:0.5rem;"></i> ${f}</li>`).join('')
+            : '<li>ISO 1940 Dynamically Balanced</li>';
+
+          container.innerHTML = `
+            <div style="margin-bottom: 2rem;">
+              <a href="/products" style="color: var(--text-muted); font-weight: 500;"><i class="fa-solid fa-arrow-left"></i> Back to Product Catalog</a>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; margin-bottom: 4rem;">
+              <div>
+                <img src="${mainImg}" alt="${product.name}" style="width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 1px solid var(--border-light); max-height: 450px; object-fit: cover;">
+              </div>
+
+              <div>
+                <span class="badge-tag">${product.category}</span>
+                <h1 style="font-size: 2.25rem; margin: 0.5rem 0 1rem 0; color: var(--text-main);">${product.name}</h1>
+                <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6;">${product.shortDescription}</p>
+
+                <div style="background: var(--bg-subtle); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 2rem;">
+                  <h4 style="margin-bottom: 0.75rem; color: var(--primary-dark);">Key Engineering Features</h4>
+                  <ul style="padding-left: 0;">${featuresHtml}</ul>
+                </div>
+
+                <a href="/contact?product=${encodeURIComponent(product.name)}" class="btn btn-primary" style="font-size: 1.05rem; padding: 1rem 2rem;">
+                  <i class="fa-solid fa-paper-plane"></i> Enquire About This Product
+                </a>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 4rem;">
+              <h2 style="font-size: 1.75rem; margin-bottom: 1rem;">Detailed Product Overview</h2>
+              <p style="color: var(--text-muted); line-height: 1.8; font-size: 1.05rem;">${product.fullDescription}</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1.25fr 1fr; gap: 3.5rem; margin-bottom: 4rem;">
+              <div>
+                <h2 style="font-size: 1.75rem; margin-bottom: 1rem;">Technical Specifications</h2>
+                <div class="spec-table-container">
+                  <table class="spec-table">
+                    <tbody>${specsHtml}</tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div>
+                <h2 style="font-size: 1.75rem; margin-bottom: 1rem;">Industrial Applications</h2>
+                <div style="background: #ffffff; padding: 1.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);">
+                  <ul style="padding-left: 0;">${appsHtml}</ul>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 4rem;">
+              <h3 style="color: var(--danger);">Product Not Found</h3>
+              <p style="margin-bottom: 1.5rem; color: var(--text-muted);">The requested equipment details could not be retrieved.</p>
+              <a href="/products" class="btn btn-primary">Return to Catalog</a>
+            </div>
+          `;
+        }
+      } catch (err) {
+        console.error('Error fetching product details:', err);
+        container.innerHTML = `
+          <div style="text-align: center; padding: 4rem;">
+            <p style="color: var(--danger);">Unable to connect to product server.</p>
+          </div>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
