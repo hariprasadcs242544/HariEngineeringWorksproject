@@ -81,9 +81,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`=====================================================`);
-  console.log(`  HARI ENGINEERING WORKS - B2B INDUSTRIAL PORTAL    `);
-  console.log(`  Server running at: http://localhost:${PORT}        `);
-  console.log(`=====================================================`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`=====================================================`);
+    console.log(`  HARI ENGINEERING WORKS - B2B INDUSTRIAL PORTAL    `);
+    console.log(`  Server running at: http://localhost:${PORT}        `);
+    console.log(`=====================================================`);
+  });
+}
+
+module.exports = app;
+
