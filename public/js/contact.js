@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     enquiryForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      const typeInput = document.getElementById('type');
       const nameInput = document.getElementById('name');
       const companyInput = document.getElementById('company');
       const emailInput = document.getElementById('email');
@@ -53,10 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const originalBtnContent = submitBtn.innerHTML;
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Submitting Enquiry...`;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Submitting Request...`;
 
       try {
         const formData = {
+          type: typeInput ? typeInput.value : 'RFQ',
           name: nameInput.value.trim(),
           company: companyInput ? companyInput.value.trim() : '',
           email: emailInput.value.trim(),
@@ -74,10 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
 
         if (response.ok && data.success) {
-          showToast(data.message || 'Your enquiry has been successfully registered!');
           enquiryForm.reset();
+          showConfirmationModal(data.data);
         } else {
-          showToast(data.error || 'Failed to submit enquiry. Please try again.', false);
+          showToast(data.error || 'Failed to submit request. Please try again.', false);
         }
       } catch (error) {
         console.error('Submission error:', error);

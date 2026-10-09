@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Track your order, quotation, or service request status in real-time with Hari Engineering Works using your reference token.">
+  <title>Track Request Status | Hari Engineering Works</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-content">
+      <div class="top-info">
+        <span><i class="fa-solid fa-phone"></i> +91 98765 43210</span>
+        <span><i class="fa-solid fa-envelope"></i> sales@hariengineeringworks.com</span>
+        <span><i class="fa-solid fa-location-dot"></i> Sakinaka, Mumbai, Maharashtra</span>
+      </div>
+      <div><span><i class="fa-solid fa-shield-halved"></i> Live Request Tracking System</span></div>
+    </div>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="header-nav">
+    <div class="container">
+      <nav class="navbar">
+        <a href="/" class="logo">
+          <div class="logo-icon"><i class="fa-solid fa-fan"></i></div>
+          <div class="logo-text">
+            <h2>HARI ENGINEERING</h2>
+            <span>WORKS • INDUSTRIAL SOLUTIONS</span>
+          </div>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/about" class="nav-link">About Us</a></li>
+          <li><a href="/products" class="nav-link">Products</a></li>
+          <li><a href="/services" class="nav-link">Services</a></li>
+          <li><a href="/industries" class="nav-link">Industries</a></li>
+          <li><a href="/track" class="nav-link active">Track Request</a></li>
+          <li><a href="/contact" class="btn btn-primary btn-sm">Get a Quote</a></li>
+        </ul>
+        <button class="mobile-toggle"><i class="fa-solid fa-bars"></i></button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Subpage Banner -->
+  <section style="background: linear-gradient(135deg, #052a4a, #0b5fa5); padding: 3.5rem 0; color: #ffffff; text-align: center;">
+    <div class="container fade-in-up">
+      <span class="badge-tag" style="background: rgba(255,255,255,0.15); color: #ffffff;">Order & RFQ Tracker</span>
+      <h1 style="font-size: 2.5rem; color: #ffffff; margin-top: 0.5rem;">Track Your Request Status</h1>
+      <p style="color: #cbd5e1; max-width: 600px; margin: 0.5rem auto 0 auto;">Enter your reference token number (e.g., RFQ-20261009-0001 or ORD-20261009-0001) below to inspect real-time progress.</p>
+    </div>
+  </section>
+
+  <!-- Track Form Section -->
+  <section class="section" style="padding: 3rem 0; background: var(--bg-light);">
+    <div class="container" style="max-width: 800px;">
+      
+      <!-- Search Card -->
+      <div class="card" style="background: #ffffff; border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-md); border: 1px solid var(--border-light); margin-bottom: 2rem;">
+        <form id="track-form" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <input 
+            type="text" 
+            id="token-input" 
+            class="form-control" 
+            placeholder="Enter Token Number (e.g. RFQ-20261009-0001)" 
+            style="flex: 1; min-width: 260px; font-size: 1.1rem; text-transform: uppercase;"
+            required
+          >
+          <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.8rem; font-size: 1rem;">
+            <i class="fa-solid fa-magnifying-glass"></i> Track Request
+          </button>
+        </form>
+        <div id="track-error" style="display:none; margin-top: 1rem; color: var(--danger); background: #fef2f2; padding: 0.75rem 1rem; border-radius: 6px; border: 1px solid #fecaca; font-size: 0.95rem;"></div>
+      </div>
+
+      <!-- Result Container -->
+      <div id="track-result" style="display: none;">
+        
+        <div class="card" style="background: #ffffff; border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--border-light);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+            <div>
+              <span id="result-type-badge" class="badge-tag" style="background: #e0f2fe; color: #0284c7; font-weight: 600;">RFQ</span>
+              <h2 id="result-token" style="font-size: 1.8rem; color: var(--primary-dark); margin-top: 0.5rem;">RFQ-20261009-0001</h2>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">
+                Submitted on: <span id="result-created" style="font-weight: 600;">-</span>
+              </p>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Current Status</span>
+              <span id="result-status-badge" style="display: inline-block; padding: 0.4rem 1.2rem; border-radius: 50px; font-weight: 700; font-size: 0.95rem; background: #dcfce7; color: #15803d;">
+                NEW
+              </span>
+            </div>
+          </div>
+
+          <!-- Item summary -->
+          <div style="background: #f8fafc; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 2rem;">
+            <h4 style="margin: 0 0 0.5rem 0; color: var(--text-main); font-size: 1rem;"><i class="fa-solid fa-box-open" style="color: var(--primary); margin-right: 6px;"></i> Requested Item / Equipment:</h4>
+            <p id="result-product" style="margin: 0; font-weight: 600; color: var(--primary-dark); font-size: 1.1rem;"></p>
+          </div>
+
+          <!-- Status Timeline -->
+          <h4 style="margin-bottom: 1.25rem; color: var(--text-main);"><i class="fa-solid fa-route" style="color: var(--primary);"></i> Lifecycle Progress</h4>
+          <div class="status-steps" id="status-timeline" style="display: flex; justify-content: space-between; position: relative; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem;">
+            <!-- Rendered by track.js -->
+          </div>
+
+          <!-- Admin Response / Quote Message -->
+          <div id="admin-reply-box" style="display: none; background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0 8px 8px 0;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #1e40af; font-size: 1rem;"><i class="fa-solid fa-user-gear"></i> Official Response from Hari Engineering Works:</h4>
+            <p id="admin-reply-text" style="margin: 0; color: #1e3a8a; font-size: 0.95rem; white-space: pre-line;"></p>
+          </div>
+
+          <!-- Live socket status notification banner -->
+          <div id="live-update-notice" style="display:none; margin-top: 1.5rem; text-align: center; color: #166534; background: #f0fdf4; padding: 0.75rem; border-radius: 6px; font-size: 0.9rem; font-weight: 500;">
+            <i class="fa-solid fa-bolt" style="color: #22c55e;"></i> Live updates active! Status will refresh automatically when updated by engineers.
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding-top:0;">
+        <p>&copy; 2026 Hari Engineering Works. All Rights Reserved.</p>
+        <p><a href="/" style="color:#94a3b8;">Home</a> | <a href="/products" style="color:#94a3b8;">Products</a> | <a href="/track" style="color:#94a3b8;">Track Request</a> | <a href="/contact" style="color:#94a3b8;">Contact Us</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/track.js"></script>
+</body>
+</html>

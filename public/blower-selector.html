@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Use the Hari Engineering Blower Selection Box to calculate required CFM airflow, static pressure (mmWG), duct diameter, and find the right industrial blower.">
+  <title>Blower Selector Tool | Find The Right Industrial Blower</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-content">
+      <div class="top-info">
+        <span><i class="fa-solid fa-phone"></i> +91 98765 43210</span>
+        <span><i class="fa-solid fa-envelope"></i> sales@hariengineeringworks.com</span>
+        <span><i class="fa-solid fa-location-dot"></i> Sakinaka, Mumbai, Maharashtra</span>
+      </div>
+      <div><span><i class="fa-solid fa-calculator"></i> Industrial Airflow & Pressure Calculator</span></div>
+    </div>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="header-nav">
+    <div class="container">
+      <nav class="navbar">
+        <a href="/" class="logo">
+          <div class="logo-icon"><i class="fa-solid fa-fan"></i></div>
+          <div class="logo-text">
+            <h2>HARI ENGINEERING</h2>
+            <span>WORKS • INDUSTRIAL SOLUTIONS</span>
+          </div>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/about" class="nav-link">About Us</a></li>
+          <li><a href="/products" class="nav-link">Products</a></li>
+          <li><a href="/blower-selector" class="nav-link active"><i class="fa-solid fa-calculator" style="color:var(--primary-blue);"></i> Blower Selector</a></li>
+          <li><a href="/services" class="nav-link">Services</a></li>
+          <li><a href="/track" class="nav-link">Track Request</a></li>
+          <li><a href="/contact" class="btn btn-primary btn-sm">Get a Quote</a></li>
+        </ul>
+        <button class="mobile-toggle"><i class="fa-solid fa-bars"></i></button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Subpage Banner -->
+  <section style="background: linear-gradient(135deg, #052a4a, #0b5fa5); padding: 3.5rem 0; color: #ffffff; text-align: center;">
+    <div class="container fade-in-up">
+      <span class="badge-tag" style="background: rgba(255,255,255,0.15); color: #ffffff;">Engineering Tool</span>
+      <h1 style="font-size: 2.5rem; color: #ffffff; margin-top: 0.5rem;">Find The Right Industrial Blower</h1>
+      <p style="color: #cbd5e1; max-width: 650px; margin: 0.5rem auto 0 auto;">Input your hoods, ducting layout, and application to compute the exact CFM duty point, duct size, static pressure, and matching blower models.</p>
+    </div>
+  </section>
+
+  <!-- Main Calculator Section -->
+  <section class="section" style="padding: 3.5rem 0; background: var(--bg-light);">
+    <div class="container">
+      
+      <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 2.5rem; align-items: start;">
+        
+        <!-- Calculator Inputs Form -->
+        <div class="card fade-in-up" style="background: #ffffff; border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-md); border: 1px solid var(--border-light);">
+          <div style="border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0; color: var(--primary-dark); font-size: 1.35rem;"><i class="fa-solid fa-sliders" style="color:var(--primary-blue);"></i> System Parameters</h3>
+            <p style="margin: 0.25rem 0 0 0; color: var(--text-muted); font-size: 0.88rem;">Specify your plant suction setup details below.</p>
+          </div>
+
+          <form id="blower-calculator-form">
+            
+            <div class="form-group">
+              <label for="application">Application / Material Handled <span style="color:var(--danger);">*</span></label>
+              <select id="application" class="form-control" required>
+                <option value="dust_collection" selected>Wood & Dry Powder Dust Collection</option>
+                <option value="welding_fumes">Welding Fumes & Metal Smoke</option>
+                <option value="grinding_chips">Metal Grinding & Heavy Granular Chips</option>
+                <option value="chemical_fumes">Chemical & Acid Fume Scrubbing</option>
+                <option value="general_ventilation">General Factory Air Circulation</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="numHoods">Number of Hoods / Inlets <span style="color:var(--danger);">*</span></label>
+                <input type="number" id="numHoods" class="form-control" min="1" max="100" value="2" required>
+              </div>
+
+              <div class="form-group">
+                <label for="airflowPerHood">Airflow per Hood (m³/h)</label>
+                <input type="number" id="airflowPerHood" class="form-control" placeholder="Default by app">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ductLengthMeters">Total Ducting Length (Meters) <span style="color:var(--danger);">*</span></label>
+                <input type="number" id="ductLengthMeters" class="form-control" min="1" max="500" value="15" required>
+              </div>
+
+              <div class="form-group">
+                <label for="numBends">Number of 90° Elbow Bends</label>
+                <input type="number" id="numBends" class="form-control" min="0" max="50" value="3">
+              </div>
+            </div>
+
+            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 1.25rem;">
+              <h5 style="margin: 0 0 0.5rem 0; font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted);">Optional Contact Details for Technical Follow-Up</h5>
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <input type="text" id="cust-name" class="form-control" placeholder="Your Name">
+              </div>
+              <div class="form-row" style="margin-bottom: 0;">
+                <input type="tel" id="cust-phone" class="form-control" placeholder="Phone Number">
+                <input type="email" id="cust-email" class="form-control" placeholder="Work Email">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem;">
+              <i class="fa-solid fa-calculator"></i> Calculate Duty Point & Match Blowers
+            </button>
+          </form>
+        </div>
+
+        <!-- Output / Results Section -->
+        <div id="calculator-result-container" class="fade-in-up">
+          <div style="background: #ffffff; border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-md); border: 1px dashed #cbd5e1; text-align: center; color: var(--text-muted);">
+            <div style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"><i class="fa-solid fa-fan"></i></div>
+            <h3 style="color: var(--text-main); margin-bottom: 0.5rem;">Ready to Calculate</h3>
+            <p style="font-size: 0.95rem; max-width: 400px; margin: 0 auto;">Enter your hood count and ducting length on the left and click <strong>Calculate</strong> to inspect duty points and blower recommendations.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding-top:0;">
+        <p>&copy; 2026 Hari Engineering Works. All Rights Reserved.</p>
+        <p><a href="/" style="color:#94a3b8;">Home</a> | <a href="/products" style="color:#94a3b8;">Products</a> | <a href="/blower-selector" style="color:#94a3b8;">Blower Selector</a> | <a href="/contact" style="color:#94a3b8;">Contact Us</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/blower-selector.js"></script>
+</body>
+</html>

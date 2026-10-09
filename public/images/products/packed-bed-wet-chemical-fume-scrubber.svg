@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#052a4a" />
+      <stop offset="100%" stop-color="#0b5fa5" />
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bg)" />
+  <rect width="800" height="600" fill="url(#grid)" />
+  
+  <!-- Industrial Accent Lines -->
+  <circle cx="400" cy="240" r="140" fill="none" stroke="rgba(56,189,248,0.2)" stroke-width="4" stroke-dasharray="10 15" />
+  <circle cx="400" cy="240" r="100" fill="none" stroke="rgba(56,189,248,0.4)" stroke-width="6" />
+  
+  <!-- Machine Illustration Graphic -->
+  <g transform="translate(400, 240)" fill="none" stroke="#38bdf8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-60,-60 L60,-60 L80,0 L60,60 L-60,60 L-80,0 Z" fill="rgba(11,95,165,0.4)"/>
+    <circle cx="0" cy="0" r="30" fill="#0284c7" stroke="#ffffff" stroke-width="4"/>
+    <line x1="0" y1="-50" x2="0" y2="50" stroke="#ffffff" stroke-width="4"/>
+    <line x1="-50" y1="0" x2="50" y2="0" stroke="#ffffff" stroke-width="4"/>
+  </g>
+  
+  <!-- Badge Tag -->
+  <rect x="250" y="420" width="300" height="32" rx="16" fill="rgba(255,255,255,0.15)"/>
+  <text x="400" y="441" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#38bdf8" text-anchor="middle" letter-spacing="1">
+    HARI ENGINEERING • SCRUBBERS
+  </text>
+  
+  <!-- Product Title -->
+  <text x="400" y="490" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">
+    Packed Bed Wet Chemical Fume Scrubber
+  </text>
+  
+  <!-- Label Note -->
+  <text x="400" y="535" font-family="Arial, sans-serif" font-size="13" fill="#cbd5e1" text-anchor="middle" font-style="italic">
+    [ Official Equipment Technical Placeholder ]
+  </text>
+</svg>

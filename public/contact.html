@@ -142,21 +142,33 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="productInterested">Equipment / Product Interested In</label>
-              <select id="productInterested" class="form-control">
-                <option value="General Enquiry">Select Equipment Category (Optional)</option>
-                <option value="High-Pressure Centrifugal Blower">High-Pressure Centrifugal Blower</option>
-                <option value="Backward Curved Centrifugal Blower">Backward Curved Centrifugal Blower</option>
-                <option value="Heavy-Duty Industrial Axial Flow Fan">Heavy-Duty Industrial Axial Flow Fan</option>
-                <option value="Tube Axial Exhaust Fan">Tube Axial Exhaust Fan</option>
-                <option value="Pulse-Jet Bag Filter Dust Collector">Pulse-Jet Bag Filter Dust Collector</option>
-                <option value="High-Efficiency Cyclone Separator">High-Efficiency Cyclone Separator</option>
-                <option value="Packed Bed Wet Chemical Scrubber">Packed Bed Wet Chemical Scrubber</option>
-                <option value="Venturi Scrubber System">Venturi Scrubber System</option>
-                <option value="Industrial Heavy-Duty Ducting System">Industrial Heavy-Duty Ducting System</option>
-                <option value="Custom Fume & Exhaust Hood System">Custom Fume & Exhaust Hood System</option>
-              </select>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="type">Request Type <span style="color:var(--danger);">*</span></label>
+                <select id="type" class="form-control" required>
+                  <option value="RFQ" selected>Request for Quotation (RFQ)</option>
+                  <option value="Order">Equipment Purchase Order</option>
+                  <option value="Service Request">Service & Maintenance Request</option>
+                  <option value="General Enquiry">General Inquiry</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="productInterested">Equipment / Product Interested In</label>
+                <select id="productInterested" class="form-control">
+                  <option value="General Enquiry">Select Equipment Category (Optional)</option>
+                  <option value="High-Pressure Centrifugal Blower">High-Pressure Centrifugal Blower</option>
+                  <option value="Backward Curved Centrifugal Blower">Backward Curved Centrifugal Blower</option>
+                  <option value="Heavy-Duty Industrial Axial Flow Fan">Heavy-Duty Industrial Axial Flow Fan</option>
+                  <option value="Tube Axial Exhaust Fan">Tube Axial Exhaust Fan</option>
+                  <option value="Pulse-Jet Bag Filter Dust Collector">Pulse-Jet Bag Filter Dust Collector</option>
+                  <option value="High-Efficiency Cyclone Separator">High-Efficiency Cyclone Separator</option>
+                  <option value="Packed Bed Wet Chemical Scrubber">Packed Bed Wet Chemical Scrubber</option>
+                  <option value="Venturi Scrubber System">Venturi Scrubber System</option>
+                  <option value="Industrial Heavy-Duty Ducting System">Industrial Heavy-Duty Ducting System</option>
+                  <option value="Custom Fume & Exhaust Hood System">Custom Fume & Exhaust Hood System</option>
+                </select>
+              </div>
             </div>
 
             <div class="form-group">

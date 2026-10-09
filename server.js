@@ -1,30 +1,56 @@
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
 const path = require('path');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 
-// Import routes
+// Import controllers & routes
 const productRoutes = require('./routes/productRoutes');
 const enquiryRoutes = require('./routes/enquiryRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const blowerController = require('./controllers/blowerController');
 
 const app = express();
+const server = http.createServer(app);
+
 const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB
 connectDB();
 
-// Middleware
-app.use(cors());
+// Security Middleware
+app.use(helmet({
+  contentSecurityPolicy: false, // Allowed inline scripts and external FontAwesome icons
+  crossOriginEmbedderPolicy: false
+}));
+
+// CORS Configuration
+app.use(cors({
+  origin: '*',
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static assets from public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Rate Limiting for Public Submissions
+const publicApiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 30, // 30 requests per IP per window
+  message: { success: false, error: 'Too many requests from this IP. Please try again after 15 minutes.' }
+});
+
 // API Routes
+app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api/enquiries', enquiryRoutes);
+app.use('/api/enquiries', publicApiLimiter, enquiryRoutes);
+app.post('/api/suggest-blower', publicApiLimiter, blowerController.suggestBlower);
 
 // Page Routing (Clean URLs mapping to HTML files in public folder)
 app.get('/', (req, res) => {
@@ -43,6 +69,10 @@ app.get('/product-detail', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'product-detail.html'));
 });
 
+app.get('/blower-selector', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'blower-selector.html'));
+});
+
 app.get('/services', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'services.html'));
 });
@@ -57,6 +87,10 @@ app.get('/gallery', (req, res) => {
 
 app.get('/contact', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'contact.html'));
+});
+
+app.get('/track', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'track.html'));
 });
 
 app.get('/admin', (req, res) => {
@@ -82,7 +116,7 @@ app.use((err, req, res, next) => {
 });
 
 if (require.main === module) {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`=====================================================`);
     console.log(`  HARI ENGINEERING WORKS - B2B INDUSTRIAL PORTAL    `);
     console.log(`  Server running at: http://localhost:${PORT}        `);
@@ -90,5 +124,5 @@ if (require.main === module) {
   });
 }
 
+// Export app for Vercel serverless runtime
 module.exports = app;
-

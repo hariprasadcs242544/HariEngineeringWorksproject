@@ -51,6 +51,32 @@ const productSchema = new mongoose.Schema({
   isFeatured: {
     type: Boolean,
     default: false
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  // Technical fields for Blower Selector Matching (Phase 5)
+  minAirflow: {
+    type: Number, // m3/h
+    default: 0
+  },
+  maxAirflow: {
+    type: Number, // m3/h
+    default: 0
+  },
+  maxStaticPressure: {
+    type: Number, // mmWG or Pa
+    default: 0
+  },
+  motorKW: {
+    type: Number, // kW
+    default: 0
+  },
+  blowerType: {
+    type: String,
+    enum: ['centrifugal', 'axial', 'none'],
+    default: 'none'
   }
 }, {
   timestamps: true

@@ -1111,3 +1111,17 @@ ul {
     text-align: center;
   }
 }
+
+/* Modal Backdrop & General Popups */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2500;
+  background: rgba(5, 42, 74, 0.85);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+

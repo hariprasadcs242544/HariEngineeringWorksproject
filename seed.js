@@ -2,6 +2,8 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const Product = require('./models/Product');
+const Enquiry = require('./models/Enquiry');
+const Counter = require('./models/Counter');
 
 const seedProducts = [
   {
@@ -11,359 +13,289 @@ const seedProducts = [
     shortDescription: "Custom modular AHU for precise temperature, humidity control, and high CFM clean air circulation in industrial facilities.",
     fullDescription: "Hari Engineering Works manufactures heavy-duty double-skin Modular Air Handling Units (AHU) for industrial plant air control, cleanrooms, pharma facilities, and textile plants. Equipped with thermal-break aluminum profiles, high-efficiency centrifugal blowers, multi-stage EU4 to HEPA filters, and cooling/heating coils.",
     specifications: [
-      { key: "Airflow Capacity (CFM / CMH)", value: "2,000 CFM to 50,000 CFM (3,400 CMH to 85,000 CMH)" },
+      { key: "Airflow Capacity", value: "2,000 CFM to 50,000 CFM (3,400 to 85,000 m³/h)" },
       { key: "Static Pressure Rating", value: "25 mm WG to 150 mm WG" },
-      { key: "Drive Transmission", value: "Direct Drive / V-Belt Drive with Variable Frequency Drive (VFD)" },
-      { key: "Casing Construction", value: "Double Skin 25mm/50mm PUF Injected Panel (Galvanized / SS304)" },
-      { key: "Filtration Efficiency", value: "Pre-filter (EU4), Fine-filter (EU7/EU9), Optional HEPA (H13/H14)" },
-      { key: "Pressure Profile", value: "Medium to High Pressure Air Delivery" }
+      { key: "Drive Transmission", value: "Direct Drive / V-Belt Drive with VFD" },
+      { key: "Casing Construction", value: "Double Skin 25mm/50mm PUF Injected Panel" }
     ],
     applications: [
       "Pharmaceutical Cleanroom Ventilation",
       "Textile Mill Humidity Control",
-      "Automotive Paint Shop Air Conditioning",
-      "Electronics Manufacturing Plants",
-      "Commercial Building Central Air Control"
+      "Automotive Paint Shop Air Conditioning"
     ],
     features: [
       "Modular extruded aluminum profile with thermal breaks",
-      "Direct drive plug fan or belt drive backward curved blower options",
-      "Integrated chilled water / DX evaporator coil",
-      "Low noise double-skin insulated casing"
+      "Direct drive plug fan or belt drive backward curved blower options"
     ],
-    images: [
-      "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: true
+    images: ["/images/products/modular-air-handling-unit-ahu-system.png"],
+    isFeatured: true,
+    isActive: true,
+    minAirflow: 3400,
+    maxAirflow: 85000,
+    maxStaticPressure: 150,
+    motorKW: 30,
+    blowerType: "none"
   },
   {
     name: "Industrial Evaporative Air Washer & Fresh Air System",
     slug: "industrial-evaporative-air-washer-system",
     category: "Air Control Systems",
     shortDescription: "High CFM evaporative cooling air washer delivering fresh, dust-free cool air for large industrial shop floors.",
-    fullDescription: "Designed for massive airflow displacement in hot industrial environments. Features high-density cross-fluted cellulose Celdek media pads, high-volume axial/centrifugal blowers, and automatic water recirculation pump to achieve up to 12°C temperature drop in workshop environments.",
+    fullDescription: "Designed for massive airflow displacement in hot industrial environments. Features high-density cross-fluted cellulose Celdek media pads, high-volume axial/centrifugal blowers, and automatic water recirculation pump.",
     specifications: [
-      { key: "Airflow Capacity (CFM / CMH)", value: "5,000 CFM to 80,000 CFM (8,500 CMH to 136,000 CMH)" },
-      { key: "Static Pressure", value: "20 mm WG to 80 mm WG" },
-      { key: "Drive Type", value: "Direct Drive / V-Belt Drive options" },
-      { key: "Cooling Media", value: "Cellulose Celdek / Rigid PVC Honeycomb Pads" },
-      { key: "Water Recirculation Pump", value: "Monoblock Submersible Pump with Auto Float Valve" }
+      { key: "Airflow Capacity", value: "5,000 CFM to 80,000 CFM (8,500 to 136,000 m³/h)" },
+      { key: "Static Pressure", value: "20 mm WG to 80 mm WG" }
     ],
-    applications: [
-      "Foundry & Forging Shop Floor Ventilation",
-      "Plastic Injection Molding Plants",
-      "Garment & Textile Factory Cooling",
-      "Steel Fabrication Workspaces"
-    ],
-    features: [
-      "Delivers 100% fresh, filtered cool air continuous exchange",
-      "Heavy GI sheet housing with epoxy protective coating",
-      "Energy efficient alternative to traditional AC units",
-      "Integrated mist eliminator vanes preventing water carryover"
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: false
+    applications: ["Foundry & Forging Shop Floor Ventilation", "Plastic Injection Molding Plants"],
+    features: ["Delivers 100% fresh, filtered cool air continuous exchange"],
+    images: ["/images/products/industrial-evaporative-air-washer-system.svg"],
+    isFeatured: false,
+    isActive: true,
+    minAirflow: 8500,
+    maxAirflow: 136000,
+    maxStaticPressure: 80,
+    motorKW: 45,
+    blowerType: "none"
   },
   {
     name: "High-Pressure Direct-Drive Centrifugal Blower",
     slug: "high-pressure-direct-drive-centrifugal-blower",
     category: "Industrial Blowers",
     shortDescription: "Heavy-duty direct drive centrifugal blower for furnace combustion, pneumatic conveying, and high pressure process airflow.",
-    fullDescription: "Hari Engineering Works manufactures direct-drive High-Pressure Centrifugal Blowers built with dynamically balanced narrow-width radial impellers. Designed for zero-slippage high static pressure performance up to 1800 mm WG in high-density process lines.",
+    fullDescription: "Hari Engineering Works manufactures direct-drive High-Pressure Centrifugal Blowers built with dynamically balanced narrow-width radial impellers. Designed for zero-slippage high static pressure performance up to 1800 mm WG.",
     specifications: [
-      { key: "Airflow Capacity (CFM / CMH)", value: "500 CFM to 25,000 CFM (850 CMH to 42,500 CMH)" },
+      { key: "Airflow Capacity", value: "500 CFM to 25,000 CFM (850 to 42,500 m³/h)" },
       { key: "Static Pressure Rating", value: "300 mm WG to 1800 mm WG (High Pressure)" },
-      { key: "Drive Mechanism", value: "Direct Drive (Motor shaft directly coupled to impeller)" },
-      { key: "Motor Power & Efficiency", value: "3 HP to 120 HP (IE3 / IE4 Flameproof Motor)" },
-      { key: "Impeller Material", value: "Heavy Carbon Steel / SS316 / Hardox Wear Plate" },
-      { key: "Operating Temperature", value: "Up to 400°C with Heat Sinking Shaft Disc" }
+      { key: "Drive Mechanism", value: "Direct Drive" }
     ],
-    applications: [
-      "Furnace & Boiler Combustion Air Supply",
-      "Pneumatic Grain & Fly Ash Conveying",
-      "Fluidized Bed Combustion (FBC) Draft",
-      "Glass Plant Air Jet Cooling",
-      "Chemical Reactor Gas Recirculation"
-    ],
-    features: [
-      "Direct drive configuration eliminates belt maintenance & power slip",
-      "Dynamically balanced according to ISO 1940 Grade G2.5 standard",
-      "Heavy rigid channel base frame with anti-vibration rubber mounts",
-      "Custom inlet guide vane dampers for precise flow control"
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: true
+    applications: ["Furnace & Boiler Combustion Air Supply", "Pneumatic Grain & Fly Ash Conveying"],
+    features: ["Direct drive configuration eliminates belt maintenance & power slip"],
+    images: ["/images/products/high-pressure-direct-drive-centrifugal-blower.png"],
+    isFeatured: true,
+    isActive: true,
+    minAirflow: 850,
+    maxAirflow: 42500,
+    maxStaticPressure: 1800,
+    motorKW: 37,
+    blowerType: "centrifugal"
   },
   {
     name: "Backward Curved High-CFM V-Belt Drive Centrifugal Blower",
     slug: "backward-curved-high-cfm-v-belt-drive-blower",
     category: "Industrial Blowers",
     shortDescription: "Non-overloading high volume centrifugal blower delivering up to 95,000 CFM for heavy plant exhaust & AHU systems.",
-    fullDescription: "Built with high-efficiency backward curved aerofoil impellers offering peak mechanical efficiency up to 86%. V-belt drive arrangement allows flexible speed adjustment to match variable site static pressure conditions.",
+    fullDescription: "Built with high-efficiency backward curved aerofoil impellers offering peak mechanical efficiency up to 86%. V-belt drive arrangement allows flexible speed adjustment.",
     specifications: [
-      { key: "Airflow Capacity (CFM / CMH)", value: "3,000 CFM to 95,000 CFM (5,100 CMH to 161,500 CMH)" },
-      { key: "Static Pressure Rating", value: "50 mm WG to 650 mm WG (High CFM Volume)" },
-      { key: "Drive Mechanism", value: "V-Belt Drive with Taper-Lock Pulleys & Belt Guard" },
-      { key: "Bearings", value: "Heavy-Duty Self-Aligning Pillow Block Bearings (SKF / FAG)" },
-      { key: "Impeller Type", value: "Backward Curved Aerofoil Blade Non-Overloading" }
+      { key: "Airflow Capacity", value: "3,000 CFM to 95,000 CFM (5,100 to 161,500 m³/h)" },
+      { key: "Static Pressure Rating", value: "50 mm WG to 650 mm WG" }
     ],
-    applications: [
-      "Industrial Plant Main Exhaust Trunking",
-      "Baghouse Dust Collector Exhaust Fans",
-      "Chemical Fume Scrubber Main Draft",
-      "Steel Mill Hall Ventilation"
-    ],
-    features: [
-      "Non-overloading horsepower curve prevents motor damage",
-      "Split casing housing for effortless site inspection & maintenance",
-      "Heavy structural channel base with motor slide rails for belt tensioning"
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: true
+    applications: ["Industrial Plant Main Exhaust Trunking", "Baghouse Dust Collector Exhaust Fans"],
+    features: ["Non-overloading horsepower curve prevents motor damage"],
+    images: ["/images/products/backward-curved-high-cfm-v-belt-drive-blower.svg"],
+    isFeatured: true,
+    isActive: true,
+    minAirflow: 5100,
+    maxAirflow: 161500,
+    maxStaticPressure: 650,
+    motorKW: 75,
+    blowerType: "centrifugal"
   },
   {
     name: "Direct-Drive Industrial Tube Axial Flow Fan",
     slug: "direct-drive-industrial-tube-axial-flow-fan",
     category: "Axial Flow Fans",
     shortDescription: "High-volume direct drive tube axial fans engineered for factory space ventilation, fume exhaust, and cooling.",
-    fullDescription: "Engineered for maximum air volume movement with minimum power consumption. Features aerofoil pressure-die-cast aluminum impellers directly mounted onto weatherproof IP55 motor shafts inside a flanged heavy cylindrical casing.",
+    fullDescription: "Engineered for maximum air volume movement with minimum power consumption. Features aerofoil pressure-die-cast aluminum impellers directly mounted onto weatherproof IP55 motor shafts.",
     specifications: [
-      { key: "Airflow Capacity (CFM / CMH)", value: "1,500 CFM to 75,000 CFM (2,550 CMH to 127,500 CMH)" },
-      { key: "Static Pressure Rating", value: "10 mm WG to 60 mm WG (High CFM)" },
-      { key: "Fan Diameter", value: "300 mm to 1600 mm (12 inch to 64 inch)" },
-      { key: "Drive Arrangement", value: "Direct Drive (Flange mounted motor inside housing)" },
-      { key: "Impeller Material", value: "Aerofoil Cast Aluminum Alloy / FRP" }
+      { key: "Airflow Capacity", value: "1,500 CFM to 75,000 CFM (2,550 to 127,500 m³/h)" },
+      { key: "Static Pressure Rating", value: "10 mm WG to 60 mm WG" }
     ],
-    applications: [
-      "Textile Mill Humidification & Exhaust",
-      "Warehouse & Factory Roof Ventilation",
-      "Transformer & Generator Cooling",
-      "Spray Paint Booth Air Exhaust"
-    ],
-    features: [
-      "Adjustable pitch angle blades for customized airflow setup",
-      "Low noise aerofoil aerodynamic design",
-      "Hot-dip galvanized heavy steel casing withstands harsh weather"
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: true
+    applications: ["Textile Mill Humidification & Exhaust", "Warehouse & Factory Roof Ventilation"],
+    features: ["Adjustable pitch angle blades for customized airflow setup"],
+    images: ["/images/products/direct-drive-industrial-tube-axial-flow-fan.svg"],
+    isFeatured: true,
+    isActive: true,
+    minAirflow: 2550,
+    maxAirflow: 127500,
+    maxStaticPressure: 60,
+    motorKW: 15,
+    blowerType: "axial"
   },
   {
     name: "V-Belt Drive Bifurcated Tube Axial Exhaust Fan",
     slug: "v-belt-drive-bifurcated-tube-axial-fan",
     category: "Axial Flow Fans",
     shortDescription: "Belt driven tube axial fan with isolated motor compartment for high temperature hot air & corrosive gas exhaust.",
-    fullDescription: "Specially engineered for corrosive fumes, steam, and high temperature gases up to 200°C. The motor is housed in a bifurcated tunnel isolated completely from the process airstream, driven via heavy duty V-belts.",
+    fullDescription: "Specially engineered for corrosive fumes, steam, and high temperature gases up to 200°C. The motor is housed in a bifurcated tunnel isolated completely from the process airstream.",
     specifications: [
-      { key: "Airflow Capacity (CFM / CMH)", value: "2,500 CFM to 60,000 CFM (4,250 CMH to 102,000 CMH)" },
-      { key: "Operating Temperature", value: "Continuous up to 200°C (392°F)" },
-      { key: "Drive Mechanism", value: "V-Belt Drive (Isolated Motor Chamber)" },
-      { key: "Casing & Impeller", value: "MS FRP Coated / Stainless Steel 304 / 316" }
+      { key: "Airflow Capacity", value: "2,500 CFM to 60,000 CFM (4,250 to 102,000 m³/h)" }
     ],
-    applications: [
-      "Hot Air Drying Oven Exhaust",
-      "Chemical Pickling & Plating Vents",
-      "Rubber & Polymer Vulcanizing Plants",
-      "Boiler House Steam Exhaust Hoods"
-    ],
-    features: [
-      "Motor protected completely from steam, corrosive fumes, and extreme heat",
-      "External belt tensioning mechanism without opening duct line",
-      "Dynamically balanced heat-resistant impellers"
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: false
+    applications: ["Hot Air Drying Oven Exhaust", "Chemical Pickling & Plating Vents"],
+    features: ["Motor protected completely from steam and corrosive fumes"],
+    images: ["/images/products/v-belt-drive-bifurcated-tube-axial-fan.svg"],
+    isFeatured: false,
+    isActive: true,
+    minAirflow: 4250,
+    maxAirflow: 102000,
+    maxStaticPressure: 75,
+    motorKW: 22,
+    blowerType: "axial"
   },
   {
     name: "Automatic Pulse-Jet Bag Filter Dust Collector",
     slug: "automatic-pulse-jet-bag-filter-dust-collector",
     category: "Dust Collectors",
     shortDescription: "Continuous cleaning pulse-jet baghouse collector delivering 99.9% emission control for industrial process dust.",
-    fullDescription: "Our Pulse-Jet Baghouse Dust Collectors deliver heavy-duty air pollution control for particulate-laden industrial exhaust streams. Features high-grade non-woven polyester filter bags, automated solid-state sequence pulse timer, and heavy rotary airlock discharge.",
+    fullDescription: "Our Pulse-Jet Baghouse Dust Collectors deliver heavy-duty air pollution control for particulate-laden industrial exhaust streams.",
     specifications: [
-      { key: "Air Handling Capacity (CFM / CMH)", value: "1,000 CFM to 85,000 CFM (1,700 CMH to 144,500 CMH)" },
-      { key: "Filtration Efficiency", value: "99.9% filtration down to 1 Micron" },
-      { key: "Cleaning Mechanism", value: "Automated Compressed Air Reverse Pulse Jet (3 to 6 bar)" },
-      { key: "Filter Media", value: "Non-woven Polyester / Nomex / PTFE Membrane" },
-      { key: "Discharge Valve", value: "Motorized Rotary Airlock Valve / Counterweight Flap Valve" }
+      { key: "Air Handling Capacity", value: "1,000 CFM to 85,000 CFM (1,700 to 144,500 m³/h)" }
     ],
-    applications: [
-      "Cement & Gypsum Handling Plants",
-      "Pharma Bulk Drug & Granulation Rooms",
-      "Woodworking, Furniture & CNC Router Dust",
-      "Metal Shot Blasting & Sand Blasting Cabinets",
-      "Foundry Sand Handling & Grinding Shop"
-    ],
-    features: [
-      "Online continuous filter bag cleaning without stopping process airflow",
-      "Differential pressure gauge (Magnehelic) for real-time monitoring",
-      "Tool-free top-removal snap-ring filter bag replacement",
-      "Built-in spark arrestor and hopper explosion relief vents"
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: true
+    applications: ["Cement & Gypsum Handling Plants", "Pharma Bulk Drug & Granulation Rooms"],
+    features: ["Online continuous filter bag cleaning without stopping process airflow"],
+    images: ["/images/products/automatic-pulse-jet-bag-filter-dust-collector.svg"],
+    isFeatured: true,
+    isActive: true,
+    minAirflow: 1700,
+    maxAirflow: 144500,
+    maxStaticPressure: 250,
+    motorKW: 45,
+    blowerType: "none"
   },
   {
     name: "High-Efficiency Cyclone Dust Collector & Separator",
     slug: "high-efficiency-cyclone-dust-collector",
     category: "Dust Collectors",
     shortDescription: "Centrifugal force pre-cleaner separator engineered to trap heavy coarse dust, chips, and sawdust.",
-    fullDescription: "Serves as a robust pre-filter unit before baghouse collectors or direct collection for high dust load industries. Converts incoming high CFM dust airstream into a high-velocity vortex, dropping heavy particles into collector hoppers.",
+    fullDescription: "Serves as a robust pre-filter unit before baghouse collectors or direct collection for high dust load industries.",
     specifications: [
-      { key: "Airflow Capacity (CFM / CMH)", value: "1,500 CFM to 45,000 CFM (2,550 CMH to 76,500 CMH)" },
-      { key: "Particle Separation Efficiency", value: "95% for particles > 10 microns" },
-      { key: "Steel Gauge Construction", value: "3.0 mm to 6.0 mm Heavy Mild Steel" },
-      { key: "Collection Hopper Discharge", value: "Manual Slide Gate / Dust Bin / Rotary Valve" }
+      { key: "Airflow Capacity", value: "1,500 CFM to 45,000 CFM" }
     ],
-    applications: [
-      "Wood Sawmills & Carpenter Workshops",
-      "Grain Processing Silos & Rice Mills",
-      "Coal Fired Boiler Fly Ash Pre-collection",
-      "Plastic Granulator & Shredder Systems"
-    ],
-    features: [
-      "Zero moving internal parts for maintenance-free operation",
-      "Handles high temperature ash and coarse abrasive dust effortlessly",
-      "Optional ceramic anti-abrasion liner for extended lifespan"
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: false
+    applications: ["Wood Sawmills & Carpenter Workshops", "Grain Processing Silos"],
+    features: ["Zero moving internal parts for maintenance-free operation"],
+    images: ["/images/products/high-efficiency-cyclone-dust-collector.svg"],
+    isFeatured: false,
+    isActive: true,
+    minAirflow: 2550,
+    maxAirflow: 76500,
+    maxStaticPressure: 150,
+    motorKW: 22,
+    blowerType: "none"
   },
   {
     name: "Packed Bed Wet Chemical Fume Scrubber",
     slug: "packed-bed-wet-chemical-fume-scrubber",
     category: "Scrubbers",
     shortDescription: "PP/FRP anti-corrosive packed bed wet scrubber for neutralizing acid gases, chemical fumes, and process odors.",
-    fullDescription: "Hari Engineering Works manufactures heavy PP/FRP dual laminate Packed Bed Wet Scrubbers engineered to neutralize toxic chemical fumes (HCl, H2SO4, HNO3, NH3, Cl2, SO2). Employs high surface area PP Pall Ring packings, liquid distributor headers, and chevron mist eliminators.",
+    fullDescription: "Hari Engineering Works manufactures heavy PP/FRP dual laminate Packed Bed Wet Scrubbers engineered to neutralize toxic chemical fumes.",
     specifications: [
-      { key: "Airflow Capacity (CFM / CMH)", value: "800 CFM to 50,000 CFM (1,360 CMH to 85,000 CMH)" },
-      { key: "Fume Absorption Efficiency", value: "Up to 98.5% Chemical Gas Neutralization" },
-      { key: "Construction Material", value: "Polypropylene (PP) / FRP Dual Laminate / SS316L" },
-      { key: "Packing Media", value: "PP Pall Rings / Tri-Packs / Tellerettes" },
-      { key: "Dosing & Recirculation Pump", value: "PP Glandless Vertical / Horizontal Chemical Pump with Automated pH Controller" }
+      { key: "Airflow Capacity", value: "800 CFM to 50,000 CFM" }
     ],
-    applications: [
-      "Electroplating & Anodizing Lines",
-      "Chemical Manufacturing Reactors",
-      "Steel Acid Pickling Tanks",
-      "Pharma Bulk Drug API Production",
-      "Fertilizer & Pesticide Processing Plants"
-    ],
-    features: [
-      "Complete corrosion immunity using premium PP/FRP composites",
-      "Integrated automated pH monitoring & chemical dosing system",
-      "Low L/G ratio optimizing chemical reagent consumption",
-      "Compliant with Indian State Pollution Control Board (MPCB/CPCB) standards"
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: true
+    applications: ["Electroplating & Anodizing Lines", "Chemical Manufacturing Reactors"],
+    features: ["Complete corrosion immunity using premium PP/FRP composites"],
+    images: ["/images/products/packed-bed-wet-chemical-fume-scrubber.svg"],
+    isFeatured: true,
+    isActive: true,
+    minAirflow: 1360,
+    maxAirflow: 85000,
+    maxStaticPressure: 180,
+    motorKW: 30,
+    blowerType: "none"
   },
   {
     name: "High-Energy Venturi Wet Scrubber System",
     slug: "high-energy-venturi-wet-scrubber",
     category: "Scrubbers",
     shortDescription: "High-velocity water atomizing venturi scrubber ideal for sticky dust, hot fumes, and sub-micron mist wash.",
-    fullDescription: "Utilizes high gas velocity in a constricted throat section to break scrubbing liquid into fine mist droplets, capturing sticky particles, hot metal dust, and sub-micron fumes with zero clogging risk.",
+    fullDescription: "Utilizes high gas velocity in a constricted throat section to break scrubbing liquid into fine mist droplets.",
     specifications: [
-      { key: "Airflow Capacity (CFM / CMH)", value: "1,200 CFM to 40,000 CFM (2,040 CMH to 68,000 CMH)" },
-      { key: "Throat Pressure Drop", value: "150 mm WG to 1000 mm WG" },
-      { key: "Efficiency Rating", value: "99% for particulates down to 1 Micron" },
-      { key: "Material Options", value: "SS316L, Rubber Lined MS, FRP" }
+      { key: "Airflow Capacity", value: "1,200 CFM to 40,000 CFM" }
     ],
-    applications: [
-      "Chemical Incinerator Exhaust Gases",
-      "Aluminum & Die Casting Foundries",
-      "Hot Metal Smelting & Refining",
-      "Industrial Kiln Wet Dust Scrubbing"
-    ],
-    features: [
-      "Adjustable throat damper regulating pressure drop & droplet size",
-      "Handles sticky, hot, and highly flammable dust safely",
-      "Integrated cyclonic moisture separator tank"
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: false
+    applications: ["Chemical Incinerator Exhaust Gases", "Aluminum & Die Casting Foundries"],
+    features: ["Adjustable throat damper regulating pressure drop & droplet size"],
+    images: ["/images/products/high-energy-venturi-wet-scrubber.svg"],
+    isFeatured: false,
+    isActive: true,
+    minAirflow: 2040,
+    maxAirflow: 68000,
+    maxStaticPressure: 350,
+    motorKW: 55,
+    blowerType: "none"
   },
   {
     name: "Industrial Heavy-Duty GI / MS / SS Ducting Systems",
     slug: "industrial-heavy-duty-gi-ms-ss-ducting-systems",
     category: "Industrial Ducting Systems",
     shortDescription: "Precision fabricated round and rectangular ductwork with airtight angle flanges for high pressure air lines.",
-    fullDescription: "Custom manufactured industrial ducting systems engineered from Mild Steel (MS), Galvanized Iron (GI), Stainless Steel (SS304/316), and FRP. Built with laser-cut flanges, airtight neoprene gaskets, and stiffener angles to withstand high positive & negative static pressure.",
+    fullDescription: "Custom manufactured industrial ducting systems engineered from Mild Steel (MS), Galvanized Iron (GI), and Stainless Steel (SS304/316).",
     specifications: [
-      { key: "Airflow Handling Capacity", value: "Up to 120,000 CFM (204,000 CMH)" },
-      { key: "Duct Dimensions / Diameter", value: "150 mm to 3000 mm (Round / Rectangular)" },
-      { key: "Sheet Thickness", value: "1.6 mm to 6.0 mm Heavy Industrial Gauge" },
-      { key: "Flange Joint Type", value: "Laser-cut Companion Angle Iron Flanges / Spiral Lock" },
-      { key: "Pressure Rating", value: "Up to ±6000 Pa Static Pressure" }
+      { key: "Airflow Handling Capacity", value: "Up to 120,000 CFM" }
     ],
-    applications: [
-      "Central Factory Exhaust Trunk Lines",
-      "Dust Collector & Scrubber Interconnecting Ducting",
-      "Boiler Flue Gas Exhaust Chimney Ducts",
-      "HVAC Fresh Air Distribution Main Riser"
-    ],
-    features: [
-      "Leak-proof flanged construction eliminating pressure drop losses",
-      "Structural angle stiffeners preventing duct collapse under high vacuum",
-      "Smooth interior weld seams for minimum frictional resistance",
-      "Custom elbows, Y-branches, reducers, and volume control dampers"
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: true
+    applications: ["Central Factory Exhaust Trunk Lines", "Dust Collector Interconnecting Ducting"],
+    features: ["Leak-proof flanged construction eliminating pressure drop losses"],
+    images: ["/images/products/industrial-heavy-duty-gi-ms-ss-ducting-systems.svg"],
+    isFeatured: true,
+    isActive: true,
+    minAirflow: 5000,
+    maxAirflow: 204000,
+    maxStaticPressure: 600,
+    motorKW: 0,
+    blowerType: "none"
   },
   {
     name: "Custom Fume Capture & Suction Hood System",
     slug: "custom-fume-capture-suction-hood-system",
     category: "Fume/Exhaust Hoods",
     shortDescription: "Source capture suction hoods for localized containment of toxic chemical fumes, weld smoke, and heat.",
-    fullDescription: "Engineered in accordance with ACGIH capture velocity standards. Our custom suction hoods isolate and capture hazardous emissions right at the generation source before contaminating ambient workspace air.",
+    fullDescription: "Engineered in accordance with ACGIH capture velocity standards. Our custom suction hoods isolate emissions at source.",
     specifications: [
-      { key: "Capture Airflow Range", value: "500 CFM to 20,000 CFM (850 CMH to 34,000 CMH)" },
-      { key: "Hood Configuration", value: "Canopy Hood, Side-Draft Slot Hood, Articulated Suction Arm" },
-      { key: "Material Construction", value: "Stainless Steel 304, SS316, Powder Coated MS" },
-      { key: "Capture Velocity", value: "0.5 m/s to 2.5 m/s adjustable" }
+      { key: "Capture Airflow Range", value: "500 CFM to 20,000 CFM" }
     ],
-    applications: [
-      "Industrial Welding & Brazing Stations",
-      "Laboratory Chemical Benchtop Fume Exhaust",
-      "Induction Furnace Crucible Top Suction",
-      "Acid Tank & Dip Station Canopy Exhaust"
-    ],
-    features: [
-      "High capture efficiency minimizing total exhaust CFM required",
-      "Corrosion-resistant smooth inner surface",
-      "Integrated manual/pneumatic airflow damper",
-      "Tailored shapes and dimensions to fit existing machinery"
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=1000&q=80"
-    ],
-    isFeatured: true
+    applications: ["Industrial Welding & Brazing Stations", "Laboratory Fume Exhaust"],
+    features: ["High capture efficiency minimizing total exhaust CFM required"],
+    images: ["/images/products/custom-fume-capture-suction-hood-system.svg"],
+    isFeatured: true,
+    isActive: true,
+    minAirflow: 850,
+    maxAirflow: 34000,
+    maxStaticPressure: 100,
+    motorKW: 0,
+    blowerType: "none"
+  }
+];
+
+const sampleEnquiries = [
+  {
+    token: "RFQ-20261009-0001",
+    type: "RFQ",
+    name: "Rajesh Kumar",
+    company: "Apex Textile Mills Ltd",
+    email: "rajesh@apextextiles.com",
+    phone: "+91 98765 12345",
+    productInterested: "Backward Curved High-CFM Centrifugal Blower",
+    message: "We need a 35,000 CFM exhaust blower for our dyeing unit trunk ducting. Please send technical datasheet and formal price quotation.",
+    status: "New"
+  },
+  {
+    token: "ORD-20261009-0002",
+    type: "Order",
+    name: "Anand Verma",
+    company: "Precision Forging Corp",
+    email: "anand.v@precisionforging.in",
+    phone: "+91 98200 98765",
+    productInterested: "High-Pressure Direct-Drive Centrifugal Blower",
+    message: "Purchase order ref # PFC/PO/2026/884 for 2 units of 15 HP High-Pressure Blower.",
+    status: "Confirmed"
+  },
+  {
+    token: "SRV-20261009-0003",
+    type: "Service Request",
+    name: "Sanjay Patel",
+    company: "Gujarat Pharma Chemical Works",
+    email: "spatel@gujaratchim.com",
+    phone: "+91 94260 11223",
+    productInterested: "Packed Bed Wet Chemical Fume Scrubber",
+    message: "Annual Maintenance Contract and impeller dynamic balancing service request for 25,000 CFM PP FRP Scrubber.",
+    status: "In Review"
   }
 ];
 
@@ -376,10 +308,17 @@ const runSeed = async () => {
     }
 
     await Product.deleteMany({});
-    console.log('Cleared existing product records.');
+    await Enquiry.deleteMany({});
+    await Counter.deleteMany({});
 
-    const created = await Product.insertMany(seedProducts);
-    console.log(`Successfully seeded ${created.length} comprehensive industrial products into database!`);
+    console.log('Cleared existing products, enquiries, and counters.');
+
+    const createdProds = await Product.insertMany(seedProducts);
+    console.log(`Seeded ${createdProds.length} products with local images & blower calculation specs.`);
+
+    const createdEnqs = await Enquiry.insertMany(sampleEnquiries);
+    console.log(`Seeded ${createdEnqs.length} sample tokenized enquiries (RFQ, Order, Service Request).`);
+
     process.exit(0);
   } catch (err) {
     console.error('Error during database seed:', err);

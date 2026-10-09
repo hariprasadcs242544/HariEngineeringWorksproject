@@ -1,6 +1,17 @@
 const mongoose = require('mongoose');
 
 const enquirySchema = new mongoose.Schema({
+  token: {
+    type: String,
+    unique: true,
+    index: true,
+    required: true
+  },
+  type: {
+    type: String,
+    enum: ['Order', 'RFQ', 'Service Request', 'General Enquiry'],
+    default: 'RFQ'
+  },
   name: {
     type: String,
     required: [true, 'Full name is required'],
@@ -33,8 +44,20 @@ const enquirySchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['New', 'In Review', 'Contacted', 'Closed'],
+    enum: ['New', 'In Review', 'Quoted', 'Confirmed', 'In Progress', 'Completed', 'Cancelled'],
     default: 'New'
+  },
+  adminNotes: {
+    type: String,
+    default: ''
+  },
+  adminReply: {
+    type: String,
+    default: ''
+  },
+  meta: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
   }
 }, {
   timestamps: true
