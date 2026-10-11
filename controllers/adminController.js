@@ -127,12 +127,13 @@ exports.getDashboardStats = async (req, res) => {
       productsCount = 12;
     }
 
+    const isOrderType = t => ['order', 'purchase', 'purchase order'].includes((t || '').toLowerCase());
     const stats = {
       orders: {
-        new: enquiriesList.filter(e => (e.type === 'Order') && e.status === 'New').length,
-        inProgress: enquiriesList.filter(e => (e.type === 'Order') && ['In Review', 'Quoted', 'Confirmed', 'In Progress'].includes(e.status)).length,
-        completed: enquiriesList.filter(e => (e.type === 'Order') && e.status === 'Completed').length,
-        total: enquiriesList.filter(e => e.type === 'Order').length
+        new: enquiriesList.filter(e => isOrderType(e.type) && e.status === 'New').length,
+        inProgress: enquiriesList.filter(e => isOrderType(e.type) && ['In Review', 'Quoted', 'Confirmed', 'In Progress'].includes(e.status)).length,
+        completed: enquiriesList.filter(e => isOrderType(e.type) && e.status === 'Completed').length,
+        total: enquiriesList.filter(e => isOrderType(e.type)).length
       },
       rfqs: {
         new: enquiriesList.filter(e => (e.type === 'RFQ' || !e.type) && e.status === 'New').length,

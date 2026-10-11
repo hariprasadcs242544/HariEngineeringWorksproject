@@ -147,10 +147,10 @@
               <div class="form-group">
                 <label for="type">Request Type <span style="color:var(--danger);">*</span></label>
                 <select id="type" class="form-control" required>
-                  <option value="RFQ" selected>Request for Quotation (RFQ)</option>
-                  <option value="Order">Equipment Purchase Order</option>
-                  <option value="Service Request">Service & Maintenance Request</option>
-                  <option value="General Enquiry">General Inquiry</option>
+                  <option value="Order">Equipment Purchase / Order (Token: P...)</option>
+                  <option value="RFQ" selected>Request for Quotation / RFQ (Token: RFQ...)</option>
+                  <option value="General Enquiry">General Enquiry (Token: E...)</option>
+                  <option value="Service Request">Service & Maintenance Request (Token: S...)</option>
                 </select>
               </div>
 
@@ -177,8 +177,8 @@
               <textarea id="message" class="form-control" rows="4" placeholder="Mention expected CFM airflow, static pressure (mm WG), operating temperature, gas type, or general requirements..." required></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1rem; padding: 0.9rem;">
-              <i class="fa-solid fa-paper-plane"></i> Submit Quote Request
+            <button type="submit" id="enquiry-submit-btn" class="btn btn-primary" style="width: 100%; font-size: 1rem; padding: 0.9rem;">
+              <i class="fa-solid fa-paper-plane"></i> Submit Request
             </button>
           </form>
         </div>

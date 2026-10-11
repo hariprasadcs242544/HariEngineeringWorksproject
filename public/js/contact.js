@@ -4,6 +4,31 @@ document.addEventListener('DOMContentLoaded', () => {
   const enquiryForm = document.getElementById('enquiry-form');
   const productSelect = document.getElementById('productInterested');
 
+  const typeSelect = document.getElementById('type');
+  const submitBtn = enquiryForm ? enquiryForm.querySelector('button[type="submit"]') : null;
+
+  function updateSubmitBtnState(val) {
+    if (!submitBtn) return;
+    const vLower = (val || '').toLowerCase();
+    if (vLower.includes('order') || vLower.includes('purchase')) {
+      submitBtn.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> Place Purchase Order (P-Token)`;
+      submitBtn.style.background = '#10b981';
+      submitBtn.style.borderColor = '#059669';
+    } else if (vLower.includes('service')) {
+      submitBtn.innerHTML = `<i class="fa-solid fa-wrench"></i> Submit Service Request (S-Token)`;
+      submitBtn.style.background = '';
+      submitBtn.style.borderColor = '';
+    } else if (vLower.includes('enquiry')) {
+      submitBtn.innerHTML = `<i class="fa-solid fa-envelope"></i> Submit General Enquiry (E-Token)`;
+      submitBtn.style.background = '';
+      submitBtn.style.borderColor = '';
+    } else {
+      submitBtn.innerHTML = `<i class="fa-solid fa-file-invoice"></i> Submit Quote Request (RFQ-Token)`;
+      submitBtn.style.background = '';
+      submitBtn.style.borderColor = '';
+    }
+  }
+
   // Pre-fill Product Interested from URL parameter if present
   const urlParams = new URLSearchParams(window.location.search);
   const prefilledProduct = urlParams.get('product');
@@ -24,6 +49,28 @@ document.addEventListener('DOMContentLoaded', () => {
       newOpt.selected = true;
       productSelect.appendChild(newOpt);
     }
+  }
+
+  // Pre-select Request Type from URL parameter if present (e.g. ?type=Order or ?type=RFQ)
+  const prefilledType = urlParams.get('type');
+  if (prefilledType && typeSelect) {
+    const tLower = prefilledType.toLowerCase();
+    if (tLower.includes('order') || tLower.includes('purchase')) {
+      typeSelect.value = 'Order';
+    } else if (tLower.includes('service')) {
+      typeSelect.value = 'Service Request';
+    } else if (tLower.includes('enquiry')) {
+      typeSelect.value = 'General Enquiry';
+    } else {
+      typeSelect.value = 'RFQ';
+    }
+    updateSubmitBtnState(typeSelect.value);
+  }
+
+  if (typeSelect) {
+    typeSelect.addEventListener('change', (e) => {
+      updateSubmitBtnState(e.target.value);
+    });
   }
 
   if (enquiryForm) {

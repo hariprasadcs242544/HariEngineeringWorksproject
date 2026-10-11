@@ -226,7 +226,8 @@ function renderEnquiries() {
       year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
 
-    const typeIcon = enq.type === 'Order' ? 'fa-box' : enq.type === 'Service Request' ? 'fa-wrench' : 'fa-file-invoice';
+    const tLower = (enq.type || '').toLowerCase();
+    const typeIcon = (tLower.includes('order') || tLower.includes('purchase')) ? 'fa-cart-shopping' : tLower.includes('service') ? 'fa-wrench' : tLower.includes('enquiry') ? 'fa-envelope' : 'fa-file-invoice';
     const statusColors = {
       'New': '#fef3c7,#b45309',
       'In Review': '#e0f2fe,#0369a1',

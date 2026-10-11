@@ -142,9 +142,14 @@
                   <ul style="padding-left: 0;">${featuresHtml}</ul>
                 </div>
 
-                <a href="/contact?product=${encodeURIComponent(product.name)}" class="btn btn-primary" style="font-size: 1.05rem; padding: 1rem 2rem;">
-                  <i class="fa-solid fa-paper-plane"></i> Enquire About This Product
-                </a>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+                  <a href="/contact?product=${encodeURIComponent(product.name)}&type=Order" class="btn btn-primary" style="background: #10b981; border-color: #059669; font-size: 1.05rem; padding: 0.9rem 1.8rem;">
+                    <i class="fa-solid fa-cart-shopping"></i> Purchase / Buy Now
+                  </a>
+                  <a href="/contact?product=${encodeURIComponent(product.name)}&type=RFQ" class="btn btn-secondary" style="font-size: 1.05rem; padding: 0.9rem 1.8rem;">
+                    <i class="fa-solid fa-file-invoice"></i> Enquire / Request Quote
+                  </a>
+                </div>
               </div>
             </div>
 

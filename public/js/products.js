@@ -141,12 +141,15 @@ function renderProducts(categoryFilter = 'All', searchQuery = '') {
             </div>
           ` : ''}
 
-          <div style="display: flex; gap: 0.5rem; margin-top: auto;">
-            <a href="/product-detail?id=${product._id || product.slug}" class="btn btn-secondary btn-sm" style="flex: 1;">
-              View Details <i class="fa-solid fa-arrow-right" style="font-size: 0.8rem;"></i>
+          <div style="display: flex; gap: 0.4rem; margin-top: auto; flex-wrap: wrap;">
+            <a href="/product-detail?id=${product._id || product.slug}" class="btn btn-secondary btn-sm" style="flex: 1; min-width: 75px; text-align: center; padding: 0.45rem 0.5rem; font-size: 0.82rem;">
+              Details <i class="fa-solid fa-arrow-right" style="font-size: 0.72rem;"></i>
             </a>
-            <a href="/contact?product=${encodeURIComponent(product.name)}" class="btn btn-primary btn-sm">
-              Enquire
+            <a href="/contact?product=${encodeURIComponent(product.name)}&type=RFQ" class="btn btn-sm" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-weight:600; padding: 0.45rem 0.65rem; font-size: 0.82rem; text-decoration: none; border-radius: var(--radius-sm);" title="Enquire / Request Quote">
+              <i class="fa-solid fa-file-invoice"></i> Enquire
+            </a>
+            <a href="/contact?product=${encodeURIComponent(product.name)}&type=Order" class="btn btn-sm" style="background:#10b981; color:#ffffff; border:1px solid #059669; font-weight:700; padding: 0.45rem 0.75rem; font-size: 0.82rem; text-decoration: none; border-radius: var(--radius-sm);" title="Purchase Equipment">
+              <i class="fa-solid fa-cart-shopping"></i> Purchase
             </a>
           </div>
         </div>

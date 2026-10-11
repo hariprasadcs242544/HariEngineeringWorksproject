@@ -9,7 +9,7 @@ const enquirySchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['Order', 'RFQ', 'Service Request', 'General Enquiry'],
+    enum: ['Order', 'Purchase', 'Purchase Order', 'RFQ', 'Service Request', 'General Enquiry'],
     default: 'RFQ'
   },
   name: {
