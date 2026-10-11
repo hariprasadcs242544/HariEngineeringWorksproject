@@ -31,8 +31,7 @@ const FALLBACK_PRODUCTS = [
       "Low noise double-skin insulated casing"
     ],
     images: [
-      "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/modular-air-handling-unit-ahu-system.png"
     ],
     isFeatured: true
   },
@@ -60,7 +59,7 @@ const FALLBACK_PRODUCTS = [
       "Energy efficient alternative to traditional AC units"
     ],
     images: [
-      "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/industrial-evaporative-air-washer-system.png"
     ],
     isFeatured: false
   },
@@ -89,7 +88,7 @@ const FALLBACK_PRODUCTS = [
       "Heavy rigid channel base frame with anti-vibration mounts"
     ],
     images: [
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/high-pressure-direct-drive-centrifugal-blower.png"
     ],
     isFeatured: true
   },
@@ -116,7 +115,7 @@ const FALLBACK_PRODUCTS = [
       "Split casing housing for easy site inspection & maintenance"
     ],
     images: [
-      "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/backward-curved-high-cfm-v-belt-drive-blower.png"
     ],
     isFeatured: true
   },
@@ -144,7 +143,7 @@ const FALLBACK_PRODUCTS = [
       "Hot-dip galvanized heavy steel casing"
     ],
     images: [
-      "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/direct-drive-industrial-tube-axial-flow-fan.png"
     ],
     isFeatured: true
   },
@@ -170,7 +169,7 @@ const FALLBACK_PRODUCTS = [
       "External belt tensioning mechanism without opening duct line"
     ],
     images: [
-      "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/v-belt-drive-bifurcated-tube-axial-fan.png"
     ],
     isFeatured: false
   },
@@ -199,7 +198,7 @@ const FALLBACK_PRODUCTS = [
       "Tool-free top-removal snap-ring filter bag replacement"
     ],
     images: [
-      "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/automatic-pulse-jet-bag-filter-dust-collector.png"
     ],
     isFeatured: true
   },
@@ -225,7 +224,7 @@ const FALLBACK_PRODUCTS = [
       "Handles high temperature ash and coarse abrasive dust effortlessly"
     ],
     images: [
-      "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/high-efficiency-cyclone-dust-collector.png"
     ],
     isFeatured: false
   },
@@ -254,7 +253,7 @@ const FALLBACK_PRODUCTS = [
       "Compliant with Indian Pollution Control Board standards"
     ],
     images: [
-      "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/packed-bed-wet-chemical-fume-scrubber.png"
     ],
     isFeatured: true
   },
@@ -280,7 +279,7 @@ const FALLBACK_PRODUCTS = [
       "Handles sticky, hot, and highly flammable dust safely"
     ],
     images: [
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/high-energy-venturi-wet-scrubber.png"
     ],
     isFeatured: false
   },
@@ -308,7 +307,7 @@ const FALLBACK_PRODUCTS = [
       "Custom elbows, Y-branches, reducers, and volume control dampers"
     ],
     images: [
-      "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/industrial-heavy-duty-gi-ms-ss-ducting-systems.png"
     ],
     isFeatured: true
   },
@@ -334,7 +333,7 @@ const FALLBACK_PRODUCTS = [
       "Integrated manual/pneumatic airflow damper"
     ],
     images: [
-      "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/custom-fume-capture-suction-hood-system.png"
     ],
     isFeatured: true
   }

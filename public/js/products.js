@@ -125,7 +125,7 @@ function renderProducts(categoryFilter = 'All', searchQuery = '') {
     return `
       <div class="product-card fade-in-up visible">
         <div class="product-img-wrapper">
-          <img src="${mainImg}" alt="${product.name}" loading="lazy">
+          <img src="${mainImg}" alt="${product.name}" loading="eager">
           <span class="product-cat-badge">${product.category}</span>
         </div>
         <div class="product-card-body">
