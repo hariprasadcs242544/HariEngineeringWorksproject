@@ -2,7 +2,7 @@
 
 let adminProducts = [];
 let adminEnquiries = [];
-let adminToken = null; // JWT stored in memory (not localStorage for security)
+let adminToken = sessionStorage.getItem('adminToken') || null; // Persisted in sessionStorage
 
 // ─── Initialise ───────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,6 +10,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const adminPassInput = document.getElementById('admin-pass-input');
   const adminUsernameInput = document.getElementById('admin-username-input');
   const adminAuthBtn = document.getElementById('admin-auth-btn');
+
+  // If already authenticated via sessionStorage, open portal directly
+  if (adminToken) {
+    if (adminAuthModal) adminAuthModal.style.display = 'none';
+    const statusBadge = document.getElementById('admin-status-badge');
+    if (statusBadge) statusBadge.style.display = 'inline-block';
+    loadAdminData();
+    initSocketIO();
+  }
 
   // Tab Switching
   document.querySelectorAll('.admin-tab-btn').forEach(btn => {
@@ -21,8 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const el = document.getElementById(`tab-${target}`);
       if (el) el.style.display = 'block';
 
-      // Load dashboard stats when that tab opens
+      // Load data when each tab opens
       if (target === 'dashboard') loadDashboardStats();
+      if (target === 'enquiries') fetchAdminEnquiries();
+      if (target === 'products') fetchAdminProducts();
     });
   });
 
@@ -44,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('modal-title').textContent = 'Add New Industrial Product';
       document.getElementById('product-id').value = '';
       productForm.reset();
+      const preview = document.getElementById('prod-img-preview');
+      if (preview) preview.src = '/images/products/high-pressure-direct-drive-centrifugal-blower.png';
+      const statusEl = document.getElementById('upload-status');
+      if (statusEl) statusEl.textContent = '';
       productModal.style.display = 'flex';
     });
   }
@@ -89,8 +104,12 @@ async function loginAdmin() {
 
     if (data.success) {
       adminToken = data.token;
+      sessionStorage.setItem('adminToken', data.token);
       document.getElementById('admin-auth-modal').style.display = 'none';
+      const statusBadge = document.getElementById('admin-status-badge');
+      if (statusBadge) statusBadge.style.display = 'inline-block';
       loadAdminData();
+      initSocketIO();
     } else {
       if (errorEl) { errorEl.textContent = data.error || 'Invalid credentials.'; errorEl.style.display = 'block'; }
     }
@@ -106,7 +125,20 @@ async function loginAdmin() {
 async function adminFetch(url, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...options.headers };
   if (adminToken) headers['Authorization'] = `Bearer ${adminToken}`;
-  return fetch(url, { ...options, headers });
+  const res = await fetch(url, { ...options, headers });
+  if (res.status === 401) {
+    sessionStorage.removeItem('adminToken');
+    adminToken = null;
+    const modal = document.getElementById('admin-auth-modal');
+    if (modal) modal.style.display = 'flex';
+  }
+  return res;
+}
+
+function logoutAdmin() {
+  sessionStorage.removeItem('adminToken');
+  adminToken = null;
+  window.location.reload();
 }
 
 // ─── Load All Admin Data ──────────────────────────────────────────────────────
@@ -342,20 +374,25 @@ async function deleteEnquiry(id) {
   }
 }
 
-// ─── Products ─────────────────────────────────────────────────────────────────
+// ─── Products Catalog Management ──────────────────────────────────────────────
 async function fetchAdminProducts() {
   const container = document.getElementById('products-table-body');
   if (!container) return;
+
+  container.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Loading catalog products from database...</td></tr>`;
 
   try {
     const res = await fetch('/api/products');
     const data = await res.json();
     if (data.success) {
-      adminProducts = data.data;
+      adminProducts = data.data || [];
       renderAdminProducts();
+    } else {
+      container.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--danger);">${data.error || 'Failed to load products.'}</td></tr>`;
     }
   } catch (err) {
     console.error('Error fetching admin products:', err);
+    container.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--danger);">Error loading products from server.</td></tr>`;
   }
 }
 
@@ -364,32 +401,40 @@ function renderAdminProducts() {
   if (!container) return;
 
   if (adminProducts.length === 0) {
-    container.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">No products in database. Click "Add New Product" to start.</td></tr>`;
+    container.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2.5rem;color:var(--text-muted);">No products found in catalog. Click "Add New Product" to create one.</td></tr>`;
     return;
   }
 
   container.innerHTML = adminProducts.map(p => {
-    const img = p.images && p.images.length > 0 ? p.images[0] : '/images/products/high-pressure-direct-drive-centrifugal-blower.png';
+    const img = (p.images && p.images.length > 0) ? p.images[0] : '/images/products/high-pressure-direct-drive-centrifugal-blower.png';
+    const appsList = Array.isArray(p.applications) ? p.applications : [];
+    const appsHtml = appsList.length > 0
+      ? appsList.slice(0, 3).map(a => `<span class="badge-tag" style="font-size:0.7rem;margin:2px;background:#f1f5f9;color:#334155;">${a}</span>`).join('') + (appsList.length > 3 ? ` <small style="color:var(--text-muted);font-size:0.72rem;">+${appsList.length - 3} more</small>` : '')
+      : '<span style="color:var(--text-muted);font-size:0.8rem;">—</span>';
+
     return `
       <tr>
         <td>
           <div style="display:flex;align-items:center;gap:0.75rem;">
-            <img src="${img}" alt="${p.name}" style="width:44px;height:44px;border-radius:6px;object-fit:cover;border:1px solid var(--border-light);" loading="lazy" onerror="this.src='/images/products/high-pressure-direct-drive-centrifugal-blower.png'">
-            <strong>${p.name}</strong>
+            <img src="${img}" alt="${p.name}" style="width:48px;height:48px;border-radius:6px;object-fit:cover;border:1px solid var(--border-light);flex-shrink:0;" loading="lazy" onerror="this.src='/images/products/high-pressure-direct-drive-centrifugal-blower.png'">
+            <div>
+              <strong style="color:var(--text-main);font-size:0.92rem;">${p.name}</strong>
+              <div style="font-size:0.78rem;color:var(--text-muted);max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.shortDescription || ''}</div>
+            </div>
           </div>
         </td>
         <td><span class="badge-tag" style="font-size:0.73rem;">${p.category}</span></td>
-        <td>${p.isFeatured ? '<span style="color:#10b981;font-weight:bold;">★ Featured</span>' : '<span style="color:#94a3b8;">Standard</span>'}</td>
-        <td style="font-size:0.83rem;max-width:200px;">${p.shortDescription}</td>
+        <td style="max-width:220px;">${appsHtml}</td>
+        <td>${p.isFeatured ? '<span style="color:#10b981;font-weight:700;font-size:0.82rem;"><i class="fa-solid fa-star"></i> Featured</span>' : '<span style="color:#94a3b8;font-size:0.82rem;">Standard</span>'}</td>
         <td>
           <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.isActive!==false?'#10b981':'#ef4444'};margin-right:4px;"></span>
-          <span style="font-size:0.8rem;">${p.isActive!==false?'Active':'Inactive'}</span>
+          <span style="font-size:0.8rem;font-weight:600;color:${p.isActive!==false?'#15803d':'#b91c1c'};">${p.isActive!==false?'Active':'Inactive'}</span>
         </td>
         <td>
-          <button onclick="editProduct('${p._id}')" class="btn btn-sm" style="background:#e0f2fe;color:#0369a1;border:none;padding:0.3rem 0.6rem;margin-right:0.3rem;">
+          <button onclick="editProduct('${p._id}')" class="btn btn-sm" style="background:#e0f2fe;color:#0369a1;border:none;padding:0.35rem 0.65rem;margin-right:0.3rem;" title="Edit Product">
             <i class="fa-solid fa-pen-to-square"></i> Edit
           </button>
-          <button onclick="deleteProduct('${p._id}')" class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border:none;padding:0.3rem 0.6rem;">
+          <button onclick="deleteProduct('${p._id}')" class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border:none;padding:0.35rem 0.65rem;" title="Delete Product">
             <i class="fa-solid fa-trash"></i>
           </button>
         </td>
@@ -402,14 +447,50 @@ function editProduct(id) {
   const p = adminProducts.find(item => item._id === id);
   if (!p) return;
 
-  document.getElementById('modal-title').textContent = 'Edit Product Record';
+  document.getElementById('modal-title').textContent = 'Edit Product: ' + p.name;
   document.getElementById('product-id').value = p._id;
-  document.getElementById('prod-name').value = p.name;
-  document.getElementById('prod-category').value = p.category;
-  document.getElementById('prod-short').value = p.shortDescription;
-  document.getElementById('prod-full').value = p.fullDescription;
-  document.getElementById('prod-img').value = p.images ? p.images.join(', ') : '';
+  document.getElementById('prod-name').value = p.name || '';
+  document.getElementById('prod-category').value = p.category || 'Industrial Blowers';
+  document.getElementById('prod-short').value = p.shortDescription || '';
+  document.getElementById('prod-full').value = p.fullDescription || '';
+
+  // Used for / Applications
+  const apps = Array.isArray(p.applications) ? p.applications.join(', ') : (p.applications || '');
+  document.getElementById('prod-applications').value = apps;
+
+  // Images & Preview
+  const imgStr = p.images ? p.images.join(', ') : '';
+  document.getElementById('prod-img').value = imgStr;
+  const primaryImg = (p.images && p.images.length > 0) ? p.images[0] : '/images/products/high-pressure-direct-drive-centrifugal-blower.png';
+  const preview = document.getElementById('prod-img-preview');
+  if (preview) {
+    preview.src = primaryImg;
+    preview.style.display = 'block';
+  }
+  const statusEl = document.getElementById('upload-status');
+  if (statusEl) statusEl.textContent = '';
+
+  // Specifications
+  let airflow = '', pressure = '', motor = '';
+  if (Array.isArray(p.specifications)) {
+    p.specifications.forEach(s => {
+      const k = (s.key || '').toLowerCase();
+      if (k.includes('airflow') || k.includes('capacity')) airflow = s.value;
+      else if (k.includes('pressure')) pressure = s.value;
+      else if (k.includes('motor') || k.includes('drive')) motor = s.value;
+    });
+  }
+  document.getElementById('prod-airflow').value = airflow;
+  document.getElementById('prod-pressure').value = pressure;
+  document.getElementById('prod-motor').value = motor;
+
+  // Features
+  const feats = Array.isArray(p.features) ? p.features.join(', ') : (p.features || '');
+  document.getElementById('prod-features').value = feats;
+
   document.getElementById('prod-featured').checked = Boolean(p.isFeatured);
+  document.getElementById('prod-active').checked = p.isActive !== false;
+
   document.getElementById('product-modal').style.display = 'flex';
 }
 
@@ -419,16 +500,47 @@ async function saveProduct() {
   const category = document.getElementById('prod-category').value;
   const shortDescription = document.getElementById('prod-short').value.trim();
   const fullDescription = document.getElementById('prod-full').value.trim();
+  const applicationsRaw = document.getElementById('prod-applications').value.trim();
   const imgStr = document.getElementById('prod-img').value.trim();
+  const airflow = document.getElementById('prod-airflow').value.trim();
+  const pressure = document.getElementById('prod-pressure').value.trim();
+  const motor = document.getElementById('prod-motor').value.trim();
+  const featuresRaw = document.getElementById('prod-features').value.trim();
   const isFeatured = document.getElementById('prod-featured').checked;
-  const images = imgStr ? imgStr.split(',').map(s => s.trim()) : [];
+  const isActive = document.getElementById('prod-active').checked;
+
+  if (!name || !category || !shortDescription || !fullDescription) {
+    showToast('Please fill in required fields (Name, Category, Descriptions).', false);
+    return;
+  }
+
+  const images = imgStr ? imgStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const applications = applicationsRaw ? applicationsRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const features = featuresRaw ? featuresRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+  const specifications = [];
+  if (airflow) specifications.push({ key: 'Airflow Capacity (CFM / CMH)', value: airflow });
+  if (pressure) specifications.push({ key: 'Static Pressure Rating', value: pressure });
+  if (motor) specifications.push({ key: 'Drive / Motor Power', value: motor });
 
   const payload = {
-    name, category, shortDescription, fullDescription, images, isFeatured,
-    specifications: [{ key: 'Airflow / Output', value: 'Custom Engineered' }],
-    applications: ['Industrial Plant Ventilation'],
-    features: ['Heavy Duty Construction']
+    name,
+    category,
+    shortDescription,
+    fullDescription,
+    applications,
+    features,
+    specifications,
+    images: images.length > 0 ? images : ['/images/products/high-pressure-direct-drive-centrifugal-blower.png'],
+    isFeatured,
+    isActive
   };
+
+  const saveBtn = document.getElementById('save-prod-btn');
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+  }
 
   try {
     const url = id ? `/api/products/${id}` : '/api/products';
@@ -436,24 +548,29 @@ async function saveProduct() {
     const res = await adminFetch(url, { method, body: JSON.stringify(payload) });
     const data = await res.json();
     if (data.success) {
-      showToast(id ? 'Product updated!' : 'Product added!');
-      document.getElementById('product-modal').style.display = 'none';
-      fetchAdminProducts();
+      showToast(id ? 'Product updated successfully!' : 'New product added successfully!');
+      closeProductModal();
+      await fetchAdminProducts();
     } else {
-      showToast(data.error || 'Save failed.', false);
+      showToast(data.error || 'Failed to save product.', false);
     }
   } catch (err) {
-    showToast('Failed to save product.', false);
+    showToast('Failed to connect to server.', false);
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Product';
+    }
   }
 }
 
 async function deleteProduct(id) {
-  if (!confirm('Delete this product from the database catalog?')) return;
+  if (!confirm('Are you sure you want to permanently delete this product from the database catalog?')) return;
   try {
     const res = await adminFetch(`/api/products/${id}`, { method: 'DELETE' });
     const data = await res.json();
     if (data.success) {
-      showToast('Product deleted.');
+      showToast('Product deleted successfully.');
       fetchAdminProducts();
     } else {
       showToast(data.error || 'Delete failed.', false);
@@ -465,6 +582,43 @@ async function deleteProduct(id) {
 
 function closeProductModal() {
   document.getElementById('product-modal').style.display = 'none';
+}
+
+function updateImagePreview(val) {
+  const preview = document.getElementById('prod-img-preview');
+  if (!preview) return;
+  const firstUrl = val.split(',')[0].trim();
+  preview.src = firstUrl || '/images/products/high-pressure-direct-drive-centrifugal-blower.png';
+}
+
+async function uploadProductImage(fileInput) {
+  if (!fileInput.files || fileInput.files.length === 0) return;
+  const file = fileInput.files[0];
+  const formData = new FormData();
+  formData.append('image', file);
+
+  const statusEl = document.getElementById('upload-status');
+  if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+
+  try {
+    const headers = {};
+    if (adminToken) headers['Authorization'] = `Bearer ${adminToken}`;
+    const res = await fetch('/api/products/upload-image', {
+      method: 'POST',
+      headers,
+      body: formData
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('prod-img').value = data.imageUrl;
+      updateImagePreview(data.imageUrl);
+      if (statusEl) statusEl.innerHTML = '<span style="color:#10b981;"><i class="fa-solid fa-check"></i> Uploaded!</span>';
+    } else {
+      if (statusEl) statusEl.innerHTML = `<span style="color:#ef4444;">Upload failed: ${data.error || 'Error'}</span>`;
+    }
+  } catch (err) {
+    if (statusEl) statusEl.innerHTML = '<span style="color:#ef4444;">Upload error</span>';
+  }
 }
 
 // ─── Toast Notification System ────────────────────────────────────────────────
