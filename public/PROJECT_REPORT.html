@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hari Engineering Works - Comprehensive Project Report & System Dossier</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f3d64;
+      --primary-dark: #082238;
+      --accent: #0284c7;
+      --accent-light: #e0f2fe;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --bg: #ffffff;
+      --bg-subtle: #f8fafc;
+      --border: #e2e8f0;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--text);
+      background-color: #f1f5f9;
+      line-height: 1.65;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Print and Control Bar */
+    .control-bar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--primary-dark);
+      color: #fff;
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .control-bar h3 { font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+    .control-btns { display: flex; gap: 0.75rem; }
+    .btn {
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .btn-print { background: var(--accent); color: #fff; }
+    .btn-print:hover { background: #0369a1; }
+    .btn-outline { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+    .btn-outline:hover { background: rgba(255,255,255,0.2); }
+
+    /* Paper Document Simulation */
+    .document-container {
+      max-width: 900px;
+      margin: 2.5rem auto;
+      background: #ffffff;
+      padding: 4rem 4.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border-radius: 4px;
+    }
+
+    /* Cover Page */
+    .cover-page {
+      min-height: 850px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-bottom: 2px dashed var(--border);
+      padding-bottom: 3rem;
+      margin-bottom: 3rem;
+    }
+    .cover-header { text-align: center; }
+    .cover-badge {
+      display: inline-block;
+      padding: 0.35rem 1rem;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+    }
+    .cover-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.25;
+      margin-bottom: 1rem;
+    }
+    .cover-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto;
+      font-weight: 400;
+    }
+
+    .cover-meta-grid {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.75rem;
+      margin: 2.5rem 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    .meta-item strong { display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 0.2rem; }
+    .meta-item span { font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); }
+
+    .cover-footer {
+      border-top: 2px solid var(--border);
+      padding-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Typography & Section Styling */
+    h2.chapter-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.5rem;
+      margin-top: 3rem;
+      margin-bottom: 1.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    h3.section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-top: 1.75rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    p { margin-bottom: 1rem; text-align: justify; }
+
+    /* Tables */
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    table.data-table th, table.data-table td {
+      border: 1px solid var(--border);
+      padding: 0.65rem 0.85rem;
+      text-align: left;
+    }
+    table.data-table th {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    table.data-table tr:nth-child(even) { background: var(--bg-subtle); }
+
+    /* Code Blocks */
+    pre.code-block {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 1.25rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      line-height: 1.5;
+      border-left: 4px solid var(--accent);
+    }
+
+    /* Callout & Math Boxes */
+    .callout-box {
+      background: var(--accent-light);
+      border-left: 4px solid var(--accent);
+      padding: 1.2rem;
+      border-radius: 0 6px 6px 0;
+      margin: 1.25rem 0;
+    }
+    .math-box {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      padding: 1.2rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      margin: 1.25rem 0;
+    }
+
+    /* Print Formatting */
+    @media print {
+      body { background: #fff; font-size: 12pt; }
+      .control-bar { display: none; }
+      .document-container { max-width: 100%; margin: 0; padding: 0; box-shadow: none; }
+      .page-break { page-break-before: always; }
+      .cover-page { min-height: 95vh; border-bottom: none; }
+      pre.code-block { background: #f1f5f9; color: #000; border: 1px solid #ccc; font-size: 8.5pt; }
+      table.data-table th { background: #0f3d64 !important; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Controller (Screen Only) -->
+  <div class="control-bar no-print">
+    <h3><i class="fa-solid fa-file-contract"></i> Project Technical Dossier & Formal Report</h3>
+    <div class="control-btns">
+      <a href="/" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Return to Site</a>
+      <a href="/products" class="btn btn-outline"><i class="fa-solid fa-boxes-stacked"></i> Catalog</a>
+      <button onclick="window.print()" class="btn btn-print"><i class="fa-solid fa-print"></i> Print / Save as PDF</button>
+    </div>
+  </div>
+
+  <div class="document-container">
+
+    <!-- COVER PAGE -->
+    <section class="cover-page">
+      <div class="cover-header">
+        <span class="cover-badge">Enterprise Technical Specification & Project Dossier</span>
+        <h1 class="cover-title">HARI ENGINEERING WORKS<br>B2B INDUSTRIAL COMMERCE & SELECTION PLATFORM</h1>
+        <p class="cover-subtitle">Full-Stack Architecture, Aerodynamic Fan Calculation Engine, Multi-Channel Token Tracking & Resilient Administrative CMS</p>
+      </div>
+
+      <div class="cover-meta-grid">
+        <div class="meta-item">
+          <strong>Organization / Client</strong>
+          <span>Hari Engineering Works (Sakinaka, Mumbai)</span>
+        </div>
+        <div class="meta-item">
+          <strong>Industry Vertical</strong>
+          <span>Industrial HVAC, Blowers & Pollution Control</span>
+        </div>
+        <div class="meta-item">
+          <strong>Technology Architecture</strong>
+          <span>Node.js, Express.js, Mongoose, Vanilla ES6+, CSS3</span>
+        </div>
+        <div class="meta-item">
+          <strong>Deployment Target</strong>
+          <span>Vercel Serverless Edge Platform</span>
+        </div>
+        <div class="meta-item">
+          <strong>Document Classification</strong>
+          <span>System Architecture & Requirements Dossier</span>
+        </div>
+        <div class="meta-item">
+          <strong>Release Version & Date</strong>
+          <span>Version 2.4.0 (Production) • October 2026</span>
+        </div>
+      </div>
+
+      <div class="cover-footer">
+        <div><i class="fa-solid fa-shield-halved"></i> Proprietary Engineering Platform Documentation</div>
+        <div>Status: Approved & Production Deployed</div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 1 -->
+    <section class="page-break">
+      <h2 class="chapter-title">Chapter 1: Executive Summary & Project Introduction</h2>
+      <h3 class="section-title">1.1 Company Background & Manufacturing Profile</h3>
+      <p>
+        Hari Engineering Works is an established precision engineering establishment headquartered in Sakinaka, Mumbai, Maharashtra. 
+        The organization manufactures high-performance industrial air moving machinery, air handling systems, and environmental air pollution control equipment. 
+        Its equipment portfolio includes heavy-duty Centrifugal Blowers (delivering up to 95,000 CFM), High-Pressure Combustion Air Blowers (up to 1,800 mm WG static pressure), 
+        Direct-Drive & Bifurcated Tube Axial Fans, Automated Pulse-Jet Bag Filter Dust Collectors, PP/FRP Chemical Wet Scrubbers, and custom Galvanized Iron / Mild Steel / Stainless Steel industrial duct networks.
+      </p>
+
+      <h3 class="section-title">1.2 Motivation for Digital Transformation</h3>
+      <p>
+        Historically, the industrial air moving equipment manufacturing sector has relied upon static physical brochures, manual telephone consultations, 
+        and paper-based engineering quotation drafting. This operational model suffered from significant friction points:
+      </p>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+        <li><strong>Protracted Sizing Cycles:</strong> Prospective clients spent 24-48 hours waiting for engineering sales reps to manually calculate fan static pressure duty points.</li>
+        <li><strong>Order & Enquiry Opacity:</strong> High-value machinery procurement orders lacked real-time token tracking mechanisms.</li>
+        <li><strong>Catalog Maintenance Inefficiency:</strong> Updating technical ratings, dimension charts, and field installation visuals required hardcoded source adjustments.</li>
+      </ul>
+      <p>
+        The Hari Engineering Works Digital B2B Platform resolves these challenges by providing a full-stack, enterprise-grade digital solution unifying an interactive product catalog, 
+        an automated Blower Selector aerodynamic calculator, tokenized order tracking, and an authenticated administrative Content Management System (CMS).
+      </p>
+    </section>
+
+    <!-- CHAPTER 2 -->
+    <section class="page-break">
+      <h2 class="chapter-title">Chapter 2: System Architecture & Hybrid Resilience</h2>
+      <h3 class="section-title">2.1 Three-Tier Architecture</h3>
+      <p>The platform follows an enterprise Three-Tier architectural pattern:</p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Component</th>
+            <th>Technical Implementation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Presentation Tier</strong></td>
+            <td>Client Browser</td>
+            <td>Semantic HTML5, custom Vanilla CSS3 design system, modular ES6+ JavaScript. Sub-800ms Time-to-Interactive without heavy framework bundle overhead.</td>
+          </tr>
+          <tr>
+            <td><strong>Application Tier</strong></td>
+            <td>Express.js REST Engine</td>
+            <td>Node.js runtime executing RESTful routing, JWT cryptographic verification, aerodynamic physics algorithms, and input validation.</td>
+          </tr>
+          <tr>
+            <td><strong>Data Tier</strong></td>
+            <td>MongoDB Atlas & Local Cache</td>
+            <td>Mongoose 8.x ODM connected to cloud MongoDB Atlas clusters, augmented with an autonomous in-memory fallback layer.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 class="section-title">2.2 High-Availability Zero-Downtime Fallback</h3>
+      <p>
+        To prevent business interruption during cloud database connectivity drops or DNS resolution delays, the application incorporates an autonomous in-memory fallback mechanism. 
+        If MongoDB Atlas is unreachable, the system automatically activates <code>FALLBACK_PRODUCTS</code> without crashing or serving HTTP 500 errors.
+      </p>
+      <pre class="code-block">// config/db.js connection resilience strategy
+try {
+  const conn = await mongoose.connect(process.env.MONGO_URI, options);
+  console.log(`[Database] Connected: ${conn.connection.host}`);
+} catch (error) {
+  console.warn('[Database Warning] Connection failed. Activating autonomous Fallback Mode.');
+  // App continues serving full catalog via productController.FALLBACK_PRODUCTS
+}</pre>
+    </section>
+
+    <!-- CHAPTER 3 -->
+    <section class="page-break">
+      <h2 class="chapter-title">Chapter 3: Mathematical Formulations & Blower Selector</h2>
+      <h3 class="section-title">3.1 Aerodynamic Physics & Duty Point Equations</h3>
+      <p>The Blower Selector utility (<code>public/js/blower-selector.js</code>) computes required fan horsepower and recommends models based on fundamental fluid mechanics:</p>
+
+      <div class="math-box">
+        <strong>1. Volumetric Airflow Conversion:</strong><br>
+        Q (m³/h) = CFM × 1.69901<br>
+        Q (m³/s) = Q (m³/h) / 3600<br><br>
+        <strong>2. Static Pressure Head Conversion:</strong><br>
+        ΔP (Pascals) = mm WG × 9.80665<br><br>
+        <strong>3. Theoretical Air Power:</strong><br>
+        P_air (kW) = [ Q (m³/s) × ΔP (Pa) ] / 1000<br><br>
+        <strong>4. Recommended Motor Shaft Power:</strong><br>
+        P_motor (kW) = [ P_air / (η_fan × η_drive) ] × S_margin<br>
+        <em>Where η_fan = 0.70-0.85, η_drive = 0.95 (direct) or 0.90 (belt), S_margin = 1.15 (15% reserve).</em>
+      </div>
+
+      <h3 class="section-title">3.2 Performance Curve Enveloping</h3>
+      <p>
+        The calculated operating duty point is compared against the catalog database. The engine evaluates:
+        <code>minAirflow &le; Q &le; maxAirflow</code> and <code>maxStaticPressure &ge; RequiredPressure</code>,
+        filtering by Centrifugal or Axial fan geometry and presenting the top matching models to the user.
+      </p>
+    </section>
+
+    <!-- CHAPTER 4 -->
+    <section class="page-break">
+      <h2 class="chapter-title">Chapter 4: Multi-Channel Tokenized Request System</h2>
+      <h3 class="section-title">4.1 Request Classification & Prefix Architecture</h3>
+      <p>
+        Inbound communications are segmented into distinct request classes with standardized token identifiers:
+      </p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Token Prefix</th>
+            <th>Request Classification</th>
+            <th>Operational Workflow & Business Urgency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--success);">P000000</strong></td>
+            <td>Direct Purchase Order</td>
+            <td>High-priority equipment order containing quantities, tax details, and delivery timelines.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent);">RFQ000000</strong></td>
+            <td>Request For Quotation</td>
+            <td>Technical bid specifying airflow CFM, static pressure, gas medium, and duty point.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--warning);">E000000</strong></td>
+            <td>General Equipment Enquiry</td>
+            <td>Product inquiry regarding model availability, dimensions, or technical brochures.</td>
+          </tr>
+          <tr>
+            <td><strong>S000000</strong></td>
+            <td>Turnkey Service Request</td>
+            <td>On-site ductwork erection, dynamic balancing, or annual maintenance (AMC).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 class="section-title">4.2 Customer Self-Service Tracking Portal</h3>
+      <p>
+        Clients query their assigned token at <code>/track</code>. The interface retrieves lifecycle milestones from 
+        <code>/api/enquiries/track/:tokenNo</code>, displaying real-time stages: 
+        <em>Pending Review &rarr; Technical Evaluation &rarr; In Production &rarr; Dispatched</em>.
+      </p>
+    </section>
+
+    <!-- CHAPTER 5 -->
+    <section class="page-break">
+      <h2 class="chapter-title">Chapter 5: Administrative CMS & Portal Security</h2>
+      <h3 class="section-title">5.1 Real-Time KPI Metrics Dashboard</h3>
+      <p>
+        The protected administrative dashboard (<code>/admin</code>) provides high-level metrics:
+      </p>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+        <li><strong>Total Inbound Leads:</strong> Aggregate interaction volume.</li>
+        <li><strong>Commercial Orders:</strong> Count of unprocessed P-prefixed commercial purchase orders.</li>
+        <li><strong>Active RFQ Quotations:</strong> Engineering bids awaiting quotation review.</li>
+        <li><strong>Live Machinery Listings:</strong> Number of equipment models active on the public catalog.</li>
+      </ul>
+
+      <h3 class="section-title">5.2 Security Infrastructure</h3>
+      <p>
+        The portal enforces enterprise-grade security controls:
+      </p>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+        <li><strong>Cryptographic Password Salting:</strong> Passwords hashed using <code>bcryptjs</code> with 10 salt rounds.</li>
+        <li><strong>Stateless JWT Authentication:</strong> HMAC-SHA256 signed bearer tokens with session expiration.</li>
+        <li><strong>HTTP Header Hardening:</strong> Protection against XSS, clickjacking, and MIME sniffing via <code>helmet</code>.</li>
+        <li><strong>Strict Input Sanitization:</strong> Client and server parameter validation preventing NoSQL injection.</li>
+      </ul>
+    </section>
+
+    <!-- CHAPTER 6 -->
+    <section class="page-break">
+      <h2 class="chapter-title">Chapter 6: Conclusion & Future Strategic Roadmap</h2>
+      <h3 class="section-title">6.1 Summary of Accomplishments</h3>
+      <p>
+        The Hari Engineering Works Digital B2B Platform transitions traditional industrial equipment sales into a streamlined digital experience. 
+        With automated aerodynamic fan calculations, tokenized tracking, a live administrative CMS, and resilient zero-downtime architecture, 
+        the platform elevates the company's manufacturing presence and operational efficiency.
+      </p>
+
+      <h3 class="section-title">6.2 Strategic Roadmap</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Milestone</th>
+            <th>Target Feature</th>
+            <th>Business Objective</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Phase 1</strong></td>
+            <td>Online Payment Gateways</td>
+            <td>Integration with Razorpay/Stripe for automated advance deposits on purchase orders.</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 2</strong></td>
+            <td>Automated PDF Quotations</td>
+            <td>Instant generation of branded, signed engineering estimate PDFs with duty curves.</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 3</strong></td>
+            <td>3D WebGL / CAD Visualizer</td>
+            <td>Interactive 360-degree browser inspection of impeller housings and ductwork bends.</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 4</strong></td>
+            <td>ERP Synchronization</td>
+            <td>Bi-directional sync with production scheduling and inventory management systems.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+</body>
+</html>
