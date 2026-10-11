@@ -12,92 +12,92 @@ const productRoutes = require('./routes/productRoutes');
 const enquiryRoutes = require('./routes/enquiryRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const blowerController = require('./controllers/blowerController');
+const { ensureAdminUser } = require('./controllers/adminController');
 
 const app = express();
 const server = http.createServer(app);
 
 const PORT = process.env.PORT || 5000;
+const IS_VERCEL = process.env.VERCEL === '1';
 
-// Connect to MongoDB
-connectDB();
+// ─── Socket.IO (real-time, only when not on Vercel serverless) ──────────────
+if (!IS_VERCEL) {
+  try {
+    const { Server } = require('socket.io');
+    const io = new Server(server, {
+      cors: { origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'] }
+    });
 
-// Security Middleware
+    // Attach to app so controllers can emit events
+    app.set('io', io);
+
+    io.on('connection', (socket) => {
+      socket.on('join-admin', () => socket.join('admin-room'));
+      socket.on('join-tracking', (token) => {
+        if (token) socket.join(`tracking-${token.trim().toUpperCase()}`);
+      });
+    });
+
+    console.log('[Socket.IO] Real-time server initialized');
+  } catch (err) {
+    console.warn('[Socket.IO] Not available, real-time features disabled:', err.message);
+  }
+}
+
+// ─── Connect to MongoDB ──────────────────────────────────────────────────────
+connectDB().then(() => {
+  // Seed admin user hariew/hariprasad if not already in DB
+  setTimeout(ensureAdminUser, 2000);
+}).catch(() => {});
+
+// ─── Security Middleware ─────────────────────────────────────────────────────
 app.use(helmet({
-  contentSecurityPolicy: false, // Allowed inline scripts and external FontAwesome icons
+  contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false
 }));
 
-// CORS Configuration
-app.use(cors({
-  origin: '*',
-  credentials: true
-}));
-
+app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static assets from public folder
+// Serve static assets
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Rate Limiting for Public Submissions
+// ─── Rate Limiting ───────────────────────────────────────────────────────────
 const publicApiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // 30 requests per IP per window
-  message: { success: false, error: 'Too many requests from this IP. Please try again after 15 minutes.' }
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  message: { success: false, error: 'Too many requests. Please try again after 15 minutes.' }
 });
 
-// API Routes
+// ─── API Routes ──────────────────────────────────────────────────────────────
 app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/enquiries', publicApiLimiter, enquiryRoutes);
 app.post('/api/suggest-blower', publicApiLimiter, blowerController.suggestBlower);
 
-// Page Routing (Clean URLs mapping to HTML files in public folder)
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// ─── Page Routes (Clean URLs) ────────────────────────────────────────────────
+const pages = [
+  ['/', 'index.html'],
+  ['/about', 'about.html'],
+  ['/products', 'products.html'],
+  ['/product-detail', 'product-detail.html'],
+  ['/blower-selector', 'blower-selector.html'],
+  ['/services', 'services.html'],
+  ['/industries', 'industries.html'],
+  ['/gallery', 'gallery.html'],
+  ['/contact', 'contact.html'],
+  ['/track', 'track.html'],
+  ['/admin', 'admin.html'],
+];
+
+pages.forEach(([route, file]) => {
+  app.get(route, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', file));
+  });
 });
 
-app.get('/about', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'about.html'));
-});
-
-app.get('/products', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'products.html'));
-});
-
-app.get('/product-detail', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'product-detail.html'));
-});
-
-app.get('/blower-selector', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'blower-selector.html'));
-});
-
-app.get('/services', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'services.html'));
-});
-
-app.get('/industries', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'industries.html'));
-});
-
-app.get('/gallery', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'gallery.html'));
-});
-
-app.get('/contact', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'contact.html'));
-});
-
-app.get('/track', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'track.html'));
-});
-
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
-});
-
-// 404 Error Handler
+// ─── 404 & Error Handlers ────────────────────────────────────────────────────
 app.use((req, res, next) => {
   if (req.accepts('html')) {
     res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -106,23 +106,20 @@ app.use((req, res, next) => {
   }
 });
 
-// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('[Server Error]', err.stack);
-  res.status(500).json({
-    success: false,
-    error: err.message || 'Internal Server Error'
-  });
+  res.status(500).json({ success: false, error: err.message || 'Internal Server Error' });
 });
 
+// ─── Start Server (local / Render) ──────────────────────────────────────────
 if (require.main === module) {
   server.listen(PORT, () => {
-    console.log(`=====================================================`);
-    console.log(`  HARI ENGINEERING WORKS - B2B INDUSTRIAL PORTAL    `);
+    console.log('=====================================================');
+    console.log('  HARI ENGINEERING WORKS - B2B INDUSTRIAL PORTAL    ');
     console.log(`  Server running at: http://localhost:${PORT}        `);
-    console.log(`=====================================================`);
+    console.log('=====================================================');
   });
 }
 
-// Export app for Vercel serverless runtime
+// Export for Vercel serverless (only app, not server)
 module.exports = app;

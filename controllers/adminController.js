@@ -5,16 +5,36 @@ const Admin = require('../models/Admin');
 const Enquiry = require('../models/Enquiry');
 const Product = require('../models/Product');
 
-// Fallback password check from env if Admin user not in DB
-const DEFAULT_PASS = process.env.ADMIN_KEY || 'admin123';
+// Env-configured admin credentials
+const ENV_USERNAME = process.env.ADMIN_USERNAME || 'hariew';
+const ENV_PASSWORD = process.env.ADMIN_PASSWORD || 'hariprasad';
+const ENV_KEY = process.env.ADMIN_KEY || 'hariprasad';
 const JWT_SECRET = process.env.JWT_SECRET || 'hari_engineering_secret_jwt_key_2026';
+
+// Ensure the hariew admin user exists in MongoDB (called at startup)
+exports.ensureAdminUser = async () => {
+  try {
+    if (mongoose.connection.readyState !== 1) return;
+    const existing = await Admin.findOne({ username: ENV_USERNAME });
+    if (!existing) {
+      await Admin.create({ username: ENV_USERNAME, password: ENV_PASSWORD });
+      console.log(`[Admin] Created default admin user: ${ENV_USERNAME}`);
+    }
+  } catch (err) {
+    console.error('[Admin] Failed to ensure admin user:', err.message);
+  }
+};
 
 // POST /api/admin/login
 exports.loginAdmin = async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = username || 'admin';
+    const user = (username || '').trim();
     const pass = password || '';
+
+    if (!user || !pass) {
+      return res.status(400).json({ success: false, error: 'Username and password are required.' });
+    }
 
     let isValid = false;
 
@@ -22,18 +42,16 @@ exports.loginAdmin = async (req, res) => {
       const adminDoc = await Admin.findOne({ username: user });
       if (adminDoc) {
         isValid = await adminDoc.matchPassword(pass);
-      } else {
-        // First login setup fallback
-        if (pass === DEFAULT_PASS) {
-          isValid = true;
-          // Create initial admin user
-          await Admin.create({ username: user, password: pass });
-        }
+      } else if (user === ENV_USERNAME && pass === ENV_PASSWORD) {
+        // First-run: create the admin document now
+        isValid = true;
+        await Admin.create({ username: user, password: pass });
+        console.log(`[Admin] Auto-created admin: ${user}`);
       }
     } else {
-      if (pass === DEFAULT_PASS) {
-        isValid = true;
-      }
+      // DB offline fallback — match env credentials
+      if (user === ENV_USERNAME && pass === ENV_PASSWORD) isValid = true;
+      if (user === 'admin' && pass === ENV_KEY) isValid = true;
     }
 
     if (!isValid) {

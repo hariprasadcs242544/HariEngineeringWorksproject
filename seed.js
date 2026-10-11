@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const Product = require('./models/Product');
 const Enquiry = require('./models/Enquiry');
-const Counter = require('./models/Counter');
+const { Counter } = require('./models/Counter');
+const Admin = require('./models/Admin');
 
 const seedProducts = [
   {
@@ -303,21 +304,32 @@ const runSeed = async () => {
   try {
     const conn = await connectDB();
     if (!conn) {
-      console.log('MongoDB connection standby. Seed script created product definitions.');
+      console.log('MongoDB connection failed. Seed aborted.');
       process.exit(0);
     }
 
     await Product.deleteMany({});
     await Enquiry.deleteMany({});
     await Counter.deleteMany({});
+    await Admin.deleteMany({});
 
-    console.log('Cleared existing products, enquiries, and counters.');
+    console.log('Cleared existing products, enquiries, counters, and admin users.');
 
     const createdProds = await Product.insertMany(seedProducts);
-    console.log(`Seeded ${createdProds.length} products with local images & blower calculation specs.`);
+    console.log(`✓ Seeded ${createdProds.length} products with local images & blower specs.`);
 
     const createdEnqs = await Enquiry.insertMany(sampleEnquiries);
-    console.log(`Seeded ${createdEnqs.length} sample tokenized enquiries (RFQ, Order, Service Request).`);
+    console.log(`✓ Seeded ${createdEnqs.length} sample tokenized enquiries (RFQ, Order, Service Request).`);
+
+    // Create default admin user (password will be hashed by the Admin model's pre-save hook)
+    const adminPass = process.env.ADMIN_KEY || 'admin123';
+    await Admin.create({ username: 'admin', password: adminPass });
+    console.log(`✓ Created admin user: admin / ${adminPass}`);
+
+    console.log('\n📦 Database seeded successfully!');
+    console.log('   Test at: http://localhost:5000');
+    console.log('   Admin:   http://localhost:5000/admin  (admin / admin123)');
+    console.log('   Track:   http://localhost:5000/track  (token: RFQ-20261009-0001)');
 
     process.exit(0);
   } catch (err) {

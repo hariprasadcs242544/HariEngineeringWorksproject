@@ -271,8 +271,25 @@ ul {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.25rem;
 }
+
+/* Admin portal button in nav */
+a[href="/admin"].btn-sm {
+  background: #1e3a5f !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,0.3) !important;
+  padding: 0.35rem 0.85rem !important;
+  font-size: 0.82rem !important;
+  border-radius: var(--radius-md) !important;
+  transition: var(--transition);
+}
+a[href="/admin"].btn-sm:hover {
+  background: var(--primary-blue) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(11,95,165,0.35);
+}
+
 
 .nav-link {
   font-weight: 600;
